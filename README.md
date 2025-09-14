@@ -1,5 +1,4 @@
 # StudioPilates
 LABORATÓRIO DE PROGRAMAÇÃO PARA INTERNET
 
-
-Bem vindo! Teste
+Por ora, projeto será desenvolvido em php + laravel.
