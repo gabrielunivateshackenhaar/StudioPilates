@@ -1,5 +1,5 @@
 <?php
-// db.php - Conexão com o banco de dados SQLite
+// db.php - Conexão com o banco Postgres
 try {
     // Caminho para o arquivo do banco
     $pdo = new PDO("sqlite:" . __DIR__ . "/pilates.db");
