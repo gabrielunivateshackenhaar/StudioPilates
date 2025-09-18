@@ -3,7 +3,7 @@
 // Executar antes de rodar a aplicação, comando: php db/setup_users.php
 // Script para criar a tabela users e inserir usuários automáticos
 
-require_once __DIR__ . '/../db.php'; // Conexão com o banco
+require_once __DIR__ . '/db.php'; // Conexão com o banco
 
 try {
     // Criar tabela users se não existir
