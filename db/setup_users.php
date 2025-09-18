@@ -4,6 +4,7 @@
 // Script para criar a tabela users e inserir usuários automáticos
 
 require_once __DIR__ . '/db.php'; // Conexão com o banco
+require_once __DIR__ . '/../model/enums.php'; // Enums
 
 try {
     // Criar tabela users se não existir
@@ -33,33 +34,32 @@ try {
 
         // Usuário normal
         $stmt->execute([
-            '1990-01-01',   // birth_date
-            0,              // category: normal
-            'user1@test.com', // email
-            0,              // gender: male
-            0,              // laterality: right
-            'User One',     // name
-            '123456',       // password (hash depois)
-            '999999999',    // phone
-            'Student'       // profession
+            '1990-01-01',             // birth_date
+            Category::NORMAL->value,  // category: normal
+            'user1@test.com',         // email
+            Gender::MALE->value,      // gender: male
+            Laterality::RIGHT->value, // laterality: right
+            'User One',               // name
+            password_hash('123456', PASSWORD_DEFAULT), // password
+            '999999999',              // phone
+            'Student'                 // profession
         ]);
 
         // Usuário admin
         $stmt->execute([
-            '1985-01-01',   // birth_date
-            1,              // category: admin
-            'admin1@test.com', // email
-            1,              // gender: female
-            1,              // laterality: left
-            'Admin One',    // name
-            'admin123',     // password (hash depois)
-            '888888888',    // phone
-            'Administrator' // profession
+            '1985-01-01',           // birth_date
+            Category::ADMIN->value, // category: admin
+            'admin1@test.com',      // email
+            Gender::FEMALE->value,  // gender: female
+            Laterality::LEFT->value, // laterality: left
+            'Admin One',             // name
+            password_hash('admin123', PASSWORD_DEFAULT), // password
+            '888888888',             // phone
+            'Administrator'          // profession
         ]);
     }
 
     echo "Tabela users criada com sucesso e usuários inseridos!";
-
 } catch (PDOException $e) {
     die("Erro ao criar tabela ou inserir usuários: " . $e->getMessage());
 }
