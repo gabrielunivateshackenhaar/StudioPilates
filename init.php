@@ -3,6 +3,6 @@
 // Arquivo que carrega a conexão e o controller
 
 require_once 'db.php';
-require_once __DIR__ . '/controller/StudentController.php';
+require_once __DIR__ . '/controller/UserController.php';
 
-$controller = new StudentController($pdo);
+$controller = new UserController($pdo);
