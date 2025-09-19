@@ -48,6 +48,11 @@ switch ($action) {
         $controller->adminPanel();
         break;
 
+    // Excluir
+    case 'deleteUser':
+        $controller->deleteUser();
+        break;
+
     // Default: redireciona para home
     default:
         $controller->home();

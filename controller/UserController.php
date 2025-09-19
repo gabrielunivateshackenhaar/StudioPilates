@@ -85,14 +85,14 @@ class UserController {
     }
 
     public function adminPanel() {
-    // Verifica se está logado e se é admin
-    if (!isset($_SESSION['user_id']) || $_SESSION['user_category'] != Category::ADMIN->value) {
-        header("Location: index.php");
-        exit;
-    }
+        // Verifica se está logado e se é admin
+        if (!isset($_SESSION['user_id']) || $_SESSION['user_category'] != Category::ADMIN->value) {
+            header("Location: index.php");
+            exit;
+        }
 
-    $users = $this->user->getAll(); // busca todos do banco
-    include __DIR__ . '/../view/admin.php';
+        $users = $this->user->getAll(); // busca todos do banco
+        include __DIR__ . '/../view/admin.php';
     }
 
     // // Mostrar formulário de edição
@@ -118,9 +118,13 @@ class UserController {
     //     header("Location: index.php?action=index");
     // }
 
-    // // Deletar usuário
-    // public function delete($id) {
-    //     $this->user->delete($id);
-    //     header("Location: index.php?action=index");
-    // }
+    // Deletar usuário
+    public function deleteUser() {
+        $id = $_GET['id'] ?? null;
+        if ($id) {
+            $this->user->delete($id); // chama o método da model
+        }
+        header("Location: index.php?action=admin");
+        exit;
+    }
 }

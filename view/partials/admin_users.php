@@ -51,7 +51,7 @@
                                 <td>
                                     <?= match ($u['laterality']) {
                                         Laterality::RIGHT->value => 'Destro',
-                                        Laterality::LEFT->value => 'Canhot',
+                                        Laterality::LEFT->value => 'Canhoto',
                                         Laterality::AMBIDEXTROUS->value => 'Ambidestro',
                                         default => '-'
                                     } ?>
@@ -60,10 +60,31 @@
                                     <a href="index.php?action=editUser&id=<?= $u['id'] ?>"
                                         class="text-secondary" title="Editar">
                                         <i class="bi bi-pencil me-2"></i></a>
-                                    <a href="index.php?action=deleteUser&id=<?= $u['id'] ?>"
-                                        class="text-secondary" title="Excluir"
-                                        onclick="return confirm('Tem certeza que deseja excluir este usuário?')">
+
+                                    <!-- Botão para abrir o modal -->
+                                    <a href="#" class="text-secondary" title="Excluir"
+                                        data-bs-toggle="modal" data-bs-target="#confirmDeleteModal<?= $u['id'] ?>">
                                         <i class="bi bi-trash"></i></a>
+
+                                    <!-- Modal de confirmação -->
+                                    <div class="modal fade" id="confirmDeleteModal<?= $u['id'] ?>" tabindex="-1" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title">Confirmar exclusão</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    Tem certeza que deseja excluir o usuário <strong><?= htmlspecialchars($u['name']) ?></strong>?
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                                    <a href="index.php?action=deleteUser&id=<?= $u['id'] ?>" class="btn btn-danger">Excluir</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                 </td>
                             </tr>
                         <?php endforeach; ?>

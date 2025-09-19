@@ -77,8 +77,8 @@ class User {
     // }
 
     // // Deletar usuário
-    // public function delete($id) {
-    //     $stmt = $this->pdo->prepare("DELETE FROM users WHERE id = ?");
-    //     return $stmt->execute([$id]);
-    // }
+    public function delete($id) {
+        $stmt = $this->pdo->prepare("DELETE FROM users WHERE id = ?");
+        return $stmt->execute([$id]);
+    }
 }
