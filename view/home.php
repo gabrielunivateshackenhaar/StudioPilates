@@ -1,54 +1,52 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
-    <meta charset="UTF-8">
-    <title>Studio Pilates</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+    <?php require __DIR__ . '/partials/head.php'; ?>
+
     <style>
-        .btn-toggle-group .btn {
-            border-radius: 0;
-        }
-        .btn-toggle-group .btn:first-child {
-            border-top-left-radius: 50px;
-            border-bottom-left-radius: 50px;
-        }
-        .btn-toggle-group .btn:last-child {
-            border-top-right-radius: 50px;
-            border-bottom-right-radius: 50px;
-        }
         .img-placeholder {
             width: 100%;
-            height: 300px; /* altura fixa para simular a imagem */
-            border: 2px dashed #6c757d; /* cinza tracejado */
-            border-radius: 0.5rem; /* mesmo arredondado do Bootstrap */
-            background-color: #f8f9fa; /* cinza claro de fundo */
+            height: 300px;
+            /* altura fixa para simular a imagem */
+            border: 2px dashed #6c757d;
+            /* cinza tracejado */
+            border-radius: 0.5rem;
+            /* mesmo arredondado do Bootstrap */
+            background-color: #f8f9fa;
+            /* cinza claro de fundo */
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #6c757d; /* texto cinza */
+            color: #6c757d;
+            /* texto cinza */
             font-weight: bold;
         }
     </style>
 </head>
+
 <body>
     <!-- Navbar superior -->
     <?php require __DIR__ . '/partials/navbar.php'; ?>
 
     <!-- Toggle Studio / Agendamento -->
-    <header class="py-4">
-        <div class="container text-center">
-            <div class="btn-group btn-toggle-group" role="group">
-                <button id="btnSobre" class="btn btn-primary px-4">Studio Pilates</button>
-                <button id="btnAgendamento" class="btn btn-outline-secondary px-4">Agendamento</button>
-            </div>
-        </div>
-    </header>
+    <div class="container text-center py-4">
+        <?php
+        $btn1Id = "btnAbout";
+        $btn1Text = "Studio Pilates";
+        $btn2Id = "btnScheduling";
+        $btn2Text = "Agendamento";
+        $conteudo1Id = "contentAbout";
+        $conteudo2Id = "contentScheduling";
+        $btn1Active = true;
+
+        require __DIR__ . '/partials/btn_toggle.php';
+        ?>
+    </div>
 
     <!-- Conteúdo Sobre -->
-    <div id="conteudoSobre" class="container my-5">
+    <div id="contentAbout" class="container my-5">
         <div class="row align-items-center my-5">
             <div class="col-md-6">
                 <div class="img-placeholder">Imagem Trabalho</div>
@@ -70,39 +68,13 @@
     </div>
 
     <!-- Conteúdo Agendamento -->
-    <div id="conteudoAgendamento" class="container my-5" style="display:none;">
+    <div id="contentScheduling" class="container my-5" style="display:none;">
         <h2 class="text-center">Agendamento de Aula</h2>
         <p class="text-center">Aqui futuramente ficará o calendário para marcar aulas.</p>
     </div>
 
-    <!-- Rodapé -->
-    <footer class="bg-light py-3 text-center">
-        &copy; 2025 Studio Pilates
-    </footer>
+    <!-- Footer -->
+    <?php require __DIR__ . '/partials/footer.php'; ?>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
-    <!-- Script Toggle -->
-    <script>
-        const btnSobre = document.getElementById('btnSobre');
-        const btnAgendamento = document.getElementById('btnAgendamento');
-        const conteudoSobre = document.getElementById('conteudoSobre');
-        const conteudoAgendamento = document.getElementById('conteudoAgendamento');
-
-        btnSobre.addEventListener('click', () => {
-            conteudoSobre.style.display = 'block';
-            conteudoAgendamento.style.display = 'none';
-            btnSobre.classList.replace('btn-outline-secondary','btn-primary');
-            btnAgendamento.classList.replace('btn-primary','btn-outline-secondary');
-        });
-
-        btnAgendamento.addEventListener('click', () => {
-            conteudoSobre.style.display = 'none';
-            conteudoAgendamento.style.display = 'block';
-            btnAgendamento.classList.replace('btn-outline-secondary','btn-primary');
-            btnSobre.classList.replace('btn-primary','btn-outline-secondary');
-        });
-    </script>
 </body>
 </html>

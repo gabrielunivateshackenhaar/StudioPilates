@@ -43,6 +43,11 @@ switch ($action) {
         $controller->logout();
         break;
 
+    // Admin
+    case 'admin':
+        $controller->adminPanel();
+        break;
+
     // Default: redireciona para home
     default:
         $controller->home();

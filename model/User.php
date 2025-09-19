@@ -12,7 +12,7 @@ class User {
     }
 
     // Buscar todos os usuários
-    public function all() {
+    public function getAll() {
         $stmt = $this->pdo->query("SELECT * FROM users");
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }

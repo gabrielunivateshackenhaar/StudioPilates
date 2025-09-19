@@ -84,6 +84,17 @@ class UserController {
         exit;
     }
 
+    public function adminPanel() {
+    // Verifica se está logado e se é admin
+    if (!isset($_SESSION['user_id']) || $_SESSION['user_category'] != Category::ADMIN->value) {
+        header("Location: index.php");
+        exit;
+    }
+
+    $users = $this->user->getAll(); // busca todos do banco
+    include __DIR__ . '/../view/admin.php';
+    }
+
     // // Mostrar formulário de edição
     // public function edit($id) {
     //     $user = $this->user->find($id);
