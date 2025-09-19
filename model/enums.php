@@ -1,5 +1,5 @@
 <?php
-// model/enums.php
+// model/Enums.php
 // Enums para campos de Users
 
 enum Gender: int {

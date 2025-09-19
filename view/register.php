@@ -19,7 +19,7 @@
                     <div class="card-body p-4">
                         <h3 class="text-center mb-4">Cadastro de Usuário</h3>
 
-                        <form action="index.php?action=store" method="post">
+                        <form action="index.php?action=register" method="post">
                             <div class="row g-3">
                                 <div class="col-md-6">
                                     <label for="name" class="form-label">Nome</label>
