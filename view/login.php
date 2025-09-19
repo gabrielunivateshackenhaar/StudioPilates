@@ -3,9 +3,11 @@
 ?>
 <!DOCTYPE html>
 <html>
+
 <head>
     <?php require __DIR__ . '/partials/head.php'; ?>
 </head>
+
 <body>
     <!-- Navbar -->
     <?php require __DIR__ . '/partials/navbar.php'; ?>
@@ -25,7 +27,12 @@
                             </div>
                             <div class="mb-3">
                                 <label for="password" class="form-label">Senha</label>
-                                <input type="password" class="form-control" id="password" name="password" placeholder="Digite sua senha" required>
+                                <div class="input-group">
+                                    <input type="password" class="form-control" id="password" name="password" placeholder="Digite sua senha" required>
+                                    <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                                        <i id="eyeIcon" class="bi bi-eye"></i>
+                                    </button>
+                                </div>
                             </div>
                             <button type="submit" class="btn btn-primary w-100">Entrar</button>
                         </form>
@@ -44,5 +51,22 @@
     <!-- Footer -->
     <?php require __DIR__ . '/partials/footer.php'; ?>
 
+    <script>
+        const toggleButton = document.getElementById('togglePassword');
+        const passwordInput = document.getElementById('password');
+        const eyeIcon = document.getElementById('eyeIcon');
+
+        toggleButton.addEventListener('click', () => {
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                eyeIcon.classList.replace('bi-eye', 'bi-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                eyeIcon.classList.replace('bi-eye-slash', 'bi-eye');
+            }
+        });
+    </script>
+
 </body>
+
 </html>
