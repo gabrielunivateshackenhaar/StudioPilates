@@ -48,6 +48,16 @@ switch ($action) {
         $controller->adminPanel();
         break;
 
+    // Editar (exibe formulário)
+    case 'editUser':
+        $controller->editUser();
+        break;
+        
+    // Editar (processa atualização)    
+    case 'updateUser':
+        $controller->updateUser();
+        break;
+
     // Excluir
     case 'deleteUser':
         $controller->deleteUser();

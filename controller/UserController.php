@@ -84,6 +84,7 @@ class UserController {
         exit;
     }
 
+    // Exibir página de admin
     public function adminPanel() {
         // Verifica se está logado e se é admin
         if (!isset($_SESSION['user_id']) || $_SESSION['user_category'] != Category::ADMIN->value) {
@@ -91,32 +92,56 @@ class UserController {
             exit;
         }
 
-        $users = $this->user->getAll(); // busca todos do banco
+        $users = $this->user->getAll();
         include __DIR__ . '/../view/admin.php';
     }
 
-    // // Mostrar formulário de edição
-    // public function edit($id) {
-    //     $user = $this->user->find($id);
-    //     include __DIR__ . '/../view/edit.php';
-    // }
+    // Exibir formulário de edição do usuário
+    public function editUser() {
+        $id = $_GET['id'] ?? null;
+        if (!$id) {
+            header("Location: index.php?action=admin");
+            exit;
+        }
 
-    // // Atualizar usuário (POST)
-    // public function update($id) {
-    //     $this->user->update(
-    //         $id, 
-    //         $_POST['name'], 
-    //         $_POST['email'], 
-    //         $_POST['phone'], 
-    //         $_POST['birth_date'], 
-    //         $_POST['category'], 
-    //         $_POST['gender'], 
-    //         $_POST['laterality'], 
-    //         $_POST['profession']
-    //         // senha será tratada em um update específico
-    //     );
-    //     header("Location: index.php?action=index");
-    // }
+        $user = $this->user->getById($id);
+        if (!$user) {
+            header("Location: index.php?action=admin");
+            exit;
+        }
+
+        // Define para onde o form vai enviar os dados
+        $formAction = "index.php?action=updateUser&id={$id}";
+
+        // Carrega a view de edição
+        require __DIR__ . '/../view/edit_user.php';
+    }
+
+    // Processar atualização
+    public function updateUser() {
+        $id = $_GET['id'] ?? null;
+        if (!$id) {
+            header("Location: index.php?action=admin");
+            exit;
+        }
+
+        // Monta array de dados vindo do POST
+        $data = [
+            'name'       => $_POST['name'] ?? '',
+            'email'      => $_POST['email'] ?? '',
+            'password'   => $_POST['password'] ?? null,
+            'birth_date' => $_POST['birth_date'] ?? '',
+            'gender'     => $_POST['gender'] ?? '',
+            'phone'      => $_POST['phone'] ?? '',
+            'profession' => $_POST['profession'] ?? '',
+            'laterality' => $_POST['laterality'] ?? '',
+        ];
+
+        $this->user->update($id, $data);
+
+        header("Location: index.php?action=admin");
+        exit;
+    }
 
     // Deletar usuário
     public function deleteUser() {

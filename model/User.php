@@ -18,7 +18,7 @@ class User {
     }
 
     // Buscar um usuário por ID
-    public function find($id) {
+    public function getById($id) {
         $stmt = $this->pdo->prepare("SELECT * FROM users WHERE id = ?");
         $stmt->execute([$id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
@@ -67,14 +67,32 @@ class User {
         ]);
     }
 
-    // // Atualizar usuário
-    // public function update($id, $name, $email, $phone, $birth_date, $category, $gender, $laterality, $profession) {
-    //     $stmt = $this->pdo->prepare("
-    //     UPDATE users 
-    //     SET name = ?, email = ?, phone = ?, birth_date = ?, category = ?, gender = ?, lateralit = ?, profession = ? 
-    //     WHERE id = ?");
-    //     return $stmt->execute([$name, $email, $phone, $birth_date, $category, $gender, $laterality, $profession, $id]);
-    // }
+    public function update($id, $data) {
+        $fields = [
+            'name'       => $data['name'],
+            'email'      => $data['email'],
+            'birth_date' => $data['birth_date'],
+            'gender'     => $data['gender'],
+            'phone'      => $data['phone'],
+            'profession' => $data['profession'],
+            'laterality' => $data['laterality'],
+        ];
+
+        // Se senha foi preenchida, atualiza também
+        if (!empty($data['password'])) {
+            $fields['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
+        }
+
+        // Cria a parte "SET campo = :campo, ..." da query dinamicamente
+        $setPart = implode(', ', array_map(fn($k) => "$k = :$k", array_keys($fields)));
+
+        // Adiciona o ID ao array, usado no WHERE
+        $fields['id'] = $id;
+
+        $stmt = $this->pdo->prepare("UPDATE users SET $setPart WHERE id = :id");
+        
+        return $stmt->execute($fields);
+    }
 
     // // Deletar usuário
     public function delete($id) {

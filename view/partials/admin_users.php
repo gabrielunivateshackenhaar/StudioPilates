@@ -61,7 +61,6 @@
                                         class="text-secondary" title="Editar">
                                         <i class="bi bi-pencil me-2"></i></a>
 
-                                    <!-- Botão para abrir o modal -->
                                     <a href="#" class="text-secondary" title="Excluir"
                                         data-bs-toggle="modal" data-bs-target="#confirmDeleteModal<?= $u['id'] ?>">
                                         <i class="bi bi-trash"></i></a>
