@@ -20,6 +20,19 @@
                 <i class="bi bi-house-door"></i>
             </a>
 
+            <!-- Ícone de usuário -->
+            <?php if (isset($_SESSION['user_id'])): ?>
+                <!-- Edição do usuário -->
+                <a href="index.php?action=profile" class="btn btn-outline-primary" data-bs-toggle="tooltip" title="Meu perfil">
+                    <i class="bi bi-person-circle"></i>
+                </a>
+            <?php else: ?>
+                <!-- Se não estiver logado, exibe login -->
+                <a href="index.php?action=showLogin" class="btn btn-outline-primary" data-bs-toggle="tooltip" title="Fazer login">
+                    <i class="bi bi-person-circle"></i>
+                </a>
+            <?php endif; ?>
+
             <?php if (isset($_SESSION['user_name'])): ?>
                 <!-- Botão de logout -->
                 <form action="index.php?action=logout" method="post" class="m-0" data-bs-toggle="tooltip" title="Sair">
@@ -35,11 +48,6 @@
                     </a>
                 <?php endif; ?>
 
-            <?php else: ?>
-                <!-- Usuário não logado: ícone de login -->
-                <a href="index.php?action=showLogin" class="btn btn-outline-primary" data-bs-toggle="tooltip" title="Fazer login">
-                    <i class="bi bi-person-circle"></i>
-                </a>
             <?php endif; ?>
 
         </div>

@@ -48,19 +48,24 @@ switch ($action) {
         $controller->adminPanel();
         break;
 
-    // Editar (exibe formulário)
+    // Editar - Admin (exibe formulário)
     case 'editUser':
         $controller->editUser();
         break;
         
-    // Editar (processa atualização)    
+    // Editar - Admin (processa atualização)    
     case 'updateUser':
         $controller->updateUser();
         break;
 
-    // Excluir
+    // Excluir - Admin
     case 'deleteUser':
         $controller->deleteUser();
+        break;
+
+    // Perfil do usuário logado (exibe)
+    case 'profile':
+        $controller->profile();
         break;
 
     // Default: redireciona para home

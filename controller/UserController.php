@@ -152,4 +152,30 @@ class UserController {
         header("Location: index.php?action=admin");
         exit;
     }
+
+    // Exibe o formulário com os dados do usuário logado
+    public function profile() {
+        if (!isset($_SESSION['user_id'])) {
+            header("Location: index.php?action=showLogin");
+            exit;
+        }
+
+        $id = $_SESSION['user_id'];
+        $user = $this->user->getById($id);
+
+        if (!$user) { // Se não encontrar o usuário no banco
+            header("Location: index.php");
+            exit;
+        }
+
+        // Define variáveis para o partial
+        $formAction = "index.php?action=updateProfile";
+
+        // indica que é edição do próprio usuário
+        $isProfile = true; 
+        
+        // Exibe a view de perfil
+        require __DIR__ . '/../view/profile.php';
+
+    }
 }
