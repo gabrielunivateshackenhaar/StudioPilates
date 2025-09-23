@@ -68,6 +68,11 @@ switch ($action) {
         $controller->profile();
         break;
 
+     // Registro de usuário pelo admin
+    case 'showRegisterUser':
+        $controller->registerUserAdminForm();
+        break;
+    
     // Default: redireciona para home
     default:
         $controller->home();

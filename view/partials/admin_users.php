@@ -6,6 +6,13 @@
 <div class="card shadow-sm">
     <div class="card-body">
 
+        <div class="d-flex justify-content-between mb-3">
+            <h5 class="mb-0">Usuários</h5>
+            <a href="index.php?action=showRegisterUser" class="btn btn-success">
+                <i class="bi bi-plus-lg"></i> Novo Usuário
+            </a>
+        </div>
+
         <?php if (count($users) > 0): ?>
             <div class="table-responsive">
                 <table class="table table-striped align-middle">

@@ -41,7 +41,17 @@ class User {
     }
 
     // Criar novo usuário
-    public function create($name, $email, $password, $birthDate, $gender, $laterality, $phone, $profession ) {
+    public function create(
+        string $name,
+        string $email,
+        string $password,
+        string $birthDate,
+        Gender $gender,
+        ?Laterality $laterality,
+        string $phone,
+        string $profession,
+        int $category = Category::NORMAL->value // padrão NORMAL
+    ) {
         $stmt = $this->pdo->prepare("
             INSERT INTO users
             (name, email, password, birth_date, gender, laterality, phone, profession, category)
@@ -51,16 +61,13 @@ class User {
         // Sempre hash a senha
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
-        // Category NORMAL por padrão
-        $category = Category::NORMAL->value;
-
         return $stmt->execute([
             $name,
             $email,
-            password_hash($password, PASSWORD_DEFAULT),
+            $hashedPassword,
             $birthDate,
             $gender->value,
-            $laterality->value,
+            $laterality?->value,
             $phone,
             $profession,
             $category

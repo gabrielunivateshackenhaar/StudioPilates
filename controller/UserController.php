@@ -68,11 +68,20 @@ class UserController {
             return;
         }
 
-        // Chama a model para criar o usuário
-        $this->user->create($name, $email, $password, $birthDate, $gender, $laterality, $phone, $profession);
+        // Categoria definida pelo admin
+        $category = isset($_POST['category']) ? (int)$_POST['category'] : Category::NORMAL->value;
 
-        // Redireciona para a tela de login
-        header("Location: index.php?action=loginForm");
+        // Chama a model para criar o usuário
+        $this->user->create($name, $email, $password, $birthDate, $gender, $laterality, $phone, $profession, $category);
+
+        // Decide para onde redirecionar
+        if (isset($_SESSION['user_id']) && $_SESSION['user_category'] == Category::ADMIN->value) {
+            // Admin cadastrando novo usuário
+            header("Location: index.php?action=admin");
+        } else {
+            // Fluxo normal
+            header("Location: index.php?action=loginForm");
+        }
         exit;
     }
 
@@ -177,5 +186,16 @@ class UserController {
         // Exibe a view de perfil
         require __DIR__ . '/../view/profile.php';
 
+    }
+
+    // Exibir formulário de registro pelo Admin
+    public function registerUserAdminForm() {
+        // Verifica se está logado e se é admin
+        if (!isset($_SESSION['user_id']) || $_SESSION['user_category'] != Category::ADMIN->value) {
+            header("Location: index.php");
+            exit;
+        }
+
+        include __DIR__ . '/../view/admin_register_user.php';
     }
 }
