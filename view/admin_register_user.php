@@ -4,29 +4,30 @@
     <?php require __DIR__ . '/partials/head.php'; ?>
 </head>
 <body>
-    <!-- Navbar -->
-    <?php require __DIR__ . '/partials/navbar.php'; ?>
+    <div id="main-content-wrapper">
+        <!-- Navbar -->
+        <?php require __DIR__ . '/partials/navbar.php'; ?>
 
-    <div class="container my-5">
-        <div class="row justify-content-center">
-            <div class="col-md-8 col-lg-6">
-                <div class="card shadow-sm">
-                    <div class="card-body p-4">
-                        <h3 class="text-center mb-4">Novo Usuário</h3>
+        <div class="container my-5">
+            <div class="row justify-content-center">
+                <div class="col-md-8 col-lg-6">
+                    <div class="card shadow-sm">
+                        <div class="card-body p-4">
+                            <h3 class="text-center mb-4">Novo Usuário</h3>
 
-                        <?php
-                        // Indica que o cadastro é feito pelo admin
-                        $isAdminRegister = true;
+                            <?php
+                            // Indica que o cadastro é feito pelo admin
+                            $isAdminRegister = true;
 
-                        // O form action permanece padrão (register)
-                        require __DIR__ . '/partials/user_form.php';
-                        ?>
+                            // O form action permanece padrão (register)
+                            require __DIR__ . '/partials/user_form.php';
+                            ?>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-
+    </div> 
     <!-- Footer -->
     <?php require __DIR__ . '/partials/footer.php'; ?>
 </body>

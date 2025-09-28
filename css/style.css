@@ -1,0 +1,18 @@
+/* 1. Define o corpo da página para usar Flexbox e ocupar 100% da altura da viewport */
+body {
+    display: flex;             /* Habilita o Flexbox */
+    flex-direction: column;    /* Organiza os filhos verticalmente */
+    min-height: 100vh;         /* Ocupa no mínimo a altura da tela */
+    margin: 0;                 /* Remove margens padrão */
+}
+
+/* 2. Garante que o conteúdo principal ocupe todo o espaço restante e empurre o rodapé */
+#main-content-wrapper {
+    flex-grow: 1;              /* Faz com que este elemento "cresça" e empurre o rodapé para baixo */
+}
+
+/* 3. Ajuste básico para o rodapé (opcional) */
+footer {
+    width: 100%;
+    /* Adicione outros estilos de cor/fundo se quiser */
+}

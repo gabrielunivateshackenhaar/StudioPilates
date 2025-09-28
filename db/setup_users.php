@@ -41,7 +41,7 @@ try {
             Laterality::RIGHT->value, // laterality: right
             'User One',               // name
             password_hash('123456', PASSWORD_DEFAULT), // password
-            '999999999',              // phone
+            '(99) 99999-9999',        // phone
             'Student'                 // profession
         ]);
 
@@ -54,7 +54,7 @@ try {
             Laterality::LEFT->value, // laterality: left
             'Admin One',             // name
             password_hash('admin123', PASSWORD_DEFAULT), // password
-            '888888888',             // phone
+            '(88) 88888-8888',       // phone
             'Administrator'          // profession
         ]);
     }
