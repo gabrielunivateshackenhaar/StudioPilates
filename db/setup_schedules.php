@@ -16,6 +16,7 @@ try {
      *  - id: chave primária
      *  - date: data da sessão (YYYY-MM-DD)
      *  - time: hora da sessão (HH:MM)
+     *  - duration_minutes: duração da aula em minutos (ex:60)
      *  - capacity: capacidade máxima
      *  - active: 1 = ativo para agendamentos, 0 = desativado
      *  - created_by: id do usuário admin que criou o horário
@@ -25,6 +26,7 @@ try {
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             date TEXT NOT NULL,
             time TEXT NOT NULL,
+            duration_minutes INTEGER NOT NULL,
             capacity INTEGER NOT NULL,
             active INTEGER NOT NULL,
             created_by INTEGER,

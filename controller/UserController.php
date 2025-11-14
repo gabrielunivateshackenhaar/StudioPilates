@@ -5,12 +5,15 @@
 // Carrega model
 require_once __DIR__ . '/../model/User.php';
 require_once __DIR__ . '/../model/Enums.php';
+require_once __DIR__ . '/../model/Schedule.php';
 
 class UserController {
     private $user;
+    private $scheduleModel;
 
     public function __construct($pdo) {
         $this->user = new User($pdo);
+        $this->scheduleModel = new Schedule($pdo);
     }
 
     // Tela inicial (home)
@@ -101,7 +104,12 @@ class UserController {
             exit;
         }
 
+        // Carrega dados dos usuários
         $users = $this->user->getAll();
+
+        //Carrega dados dos horários
+        $schedules = $this->scheduleModel->getAll();
+        
         include __DIR__ . '/../view/admin.php';
     }
 

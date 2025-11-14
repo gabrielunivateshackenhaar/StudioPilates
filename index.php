@@ -11,68 +11,78 @@ $action = $_GET['action'] ?? 'home';
 switch ($action) {
     // Home
     case 'home':
-        $controller->home();
+        $userController->home();
         break;
 
     // Login
     case 'showLogin':
-        $controller->loginForm();
+        $userController->loginForm();
         break;
     case 'login':
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $controller->login();
+            $userController->login();
         } else {
-            $controller->loginForm();
+            $userController->loginForm();
         }
         break;
 
     // Registro
     case 'showRegister':
-        $controller->registerForm();
+        $userController->registerForm();
         break;
     case 'register':
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $controller->register();
+            $userController->register();
         } else {
-            $controller->registerForm();
+            $userController->registerForm();
         }
         break;
 
     // Logout
     case 'logout':
-        $controller->logout();
+        $userController->logout();
         break;
 
     // Admin
     case 'admin':
-        $controller->adminPanel();
+        $userController->adminPanel();
         break;
 
     // Editar - Admin (exibe formulário)
     case 'editUser':
-        $controller->editUser();
+        $userController->editUser();
         break;
         
     // Editar - Admin (processa atualização)    
     case 'updateUser':
-        $controller->updateUser();
+        $userController->updateUser();
         break;
 
     // Excluir - Admin
     case 'deleteUser':
-        $controller->deleteUser();
+        $userController->deleteUser();
         break;
 
     // Perfil do usuário logado (exibe)
     case 'profile':
-        $controller->profile();
+        $userController->profile();
         break;
 
      // Registro de usuário pelo admin
     case 'showRegisterUser':
-        $controller->registerUserAdminForm();
+        $userController->registerUserAdminForm();
         break;
     
+    // Exibir formulário de novo horário
+    case 'showScheduleForm':
+        $scheduleController->showScheduleForm();
+        break;
+
+    // Processar formulário de novo horário
+    case 'saveSchedule':
+        $scheduleController->saveSchedule();
+        break;
+
     // Default: redireciona para home
     default:
         $controller->home();

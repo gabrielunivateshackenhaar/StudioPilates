@@ -1,0 +1,45 @@
+<?php
+// model/Schedule.php
+// Classe responsável por interagir com a tabela schedules
+
+class Schedule {
+    private $pdo;
+
+    public function __construct($pdo) {
+        $this->pdo = $pdo; // Conexão com o banco
+    }
+
+    /**
+     * Cria um novo horário no banco
+     */
+    public function create(string $date, string $time, int $duration_minutes, int $capacity, int $active, int $adminId) {
+        $stmt = $this->pdo->prepare("
+            INSERT INTO schedules 
+            (date, time, duration_minutes, capacity, active, created_by) 
+            VALUES (?, ?, ?, ?, ?, ?)
+        ");
+        
+        return $stmt->execute([
+            $date,
+            $time,
+            $duration_minutes,
+            $capacity,
+            $active,
+            $adminId
+        ]);
+    }
+
+    /**
+     * Busca todos os horários, trazendo o nome do admin que criou
+     */
+    public function getAll() {
+        // LEFT JOIN para pegar o 'name' da tabela 'users'
+        $stmt = $this->pdo->query("
+            SELECT s.*, u.name as admin_name 
+            FROM schedules s
+            LEFT JOIN users u ON s.created_by = u.id
+            ORDER BY s.date DESC, s.time DESC
+        ");
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+}

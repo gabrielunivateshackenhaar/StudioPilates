@@ -4,5 +4,7 @@
 
 require_once __DIR__ . '/db/db.php';
 require_once __DIR__ . '/controller/UserController.php';
+require_once __DIR__ . '/controller/ScheduleController.php';
 
-$controller = new UserController($pdo);
+$userController = new UserController($pdo);
+$scheduleController = new ScheduleController($pdo);
