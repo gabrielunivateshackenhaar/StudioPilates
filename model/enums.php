@@ -17,3 +17,19 @@ enum Category: int {
     case NORMAL = 0;
     case ADMIN = 1;
 }
+
+/*
+ * Enum para horários criados
+ */
+enum ScheduleStatus: int {
+    case INACTIVE = 0;
+    case ACTIVE = 1;
+}
+
+/*
+ * Enum para reservas
+ */
+enum BookingStatus: int {
+    case CONFIRMED = 0;
+    case CANCELLED = 1;
+}
