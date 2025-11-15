@@ -73,4 +73,60 @@ class ScheduleController {
         header("Location: index.php?action=admin");
         exit;
     }
+
+    // Retorna os horários em formato json para o FullCalendar
+    public function getSchedulesJson() {
+        
+        // Verifica se o usuário logado é um Admin
+        $isAdmin = (isset($_SESSION['user_id']) && $_SESSION['user_category'] == Category::ADMIN->value);
+
+        // Busca todos os horários cadastrados, com o nome do admin (via JOIN)
+        $schedulesFromDB = $this->scheduleModel->getAll();
+
+        // Array que será convertido em JSON
+        $events = [];
+        
+        foreach ($schedulesFromDB as $schedule) {
+            
+            // Regra de permissão: Alunos (não-admins) não podem ver horários inativos
+            if (!$isAdmin && $schedule['active'] == 0) {
+                continue; // Pula para o próximo horário
+            }
+
+            // Formata o início (ex: '2025-11-14T08:00:00')
+            $start = $schedule['date'] . 'T' . $schedule['time'];
+            
+            // Calcula o fim com base na duração (ex: 08:00 + 60 min = 09:00)
+            $endDate = new DateTime($start);
+            $endDate->modify('+' . $schedule['duration_minutes'] . ' minutes');
+            $end = $endDate->format('Y-m-d\TH:i:s');
+
+            // Define o título e a cor com base no tipo de usuário
+            $title = '';
+            $backgroundColor = '';
+
+            if ($isAdmin) {
+                // Admin vê a contagem de vagas e cores diferentes
+                $title = "Vagas: " . $schedule['capacity'];
+                $backgroundColor = ($schedule['active'] == 1) ? '#28a745' : '#6c757d'; // Verde (ativo) ou Cinza (inativo)
+            } else {
+                $title = 'Horário Disponível';
+                $backgroundColor = '#28a745';
+            }
+            
+            // Adiciona o evento formatado ao array
+            $events[] = [
+                'id'    => $schedule['id'],
+                'title' => $title,
+                'start' => $start,
+                'end'   => $end,
+                'backgroundColor' => $backgroundColor
+            ];
+        }
+
+        // Define o cabeçalho como JSON e imprime o array
+        header('Content-Type: application/json');
+        echo json_encode($events);
+        exit;
+    }
 }

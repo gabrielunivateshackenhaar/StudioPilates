@@ -13,3 +13,8 @@
 
 <!-- CSS customizado, se houver -->
 <link rel="stylesheet" href="./css/style.css">
+
+<!-- Biblioteca fullcalendar -->
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.14/index.global.min.js'></script>
+<script src='https://cdn.jsdelivr.net/npm/@fullcalendar/bootstrap5@6.1.14/index.global.min.js'></script>
+<link href='https://cdn.jsdelivr.net/npm/@fullcalendar/bootstrap5@6.1.14/main.min.css' rel='stylesheet' />

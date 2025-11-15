@@ -70,11 +70,98 @@
 
         <!-- Conteúdo Agendamento -->
         <div id="contentScheduling" class="container my-5" style="display:none;">
-            <h2 class="text-center">Agendamento de Aula</h2>
-            <p class="text-center">Aqui futuramente ficará o calendário para marcar aulas.</p>
+
+            <div class="card shadow-sm mb-3">
+                <div class="card-body d-flex flex-wrap align-items-center justify-content-center gap-3">
+                    
+                    <div class="d-flex align-items-center">
+                        <span class="badge" style="background-color: #28a745; width: 20px; height: 20px;">&nbsp;</span>
+                        <span class="ms-2 text-muted">Horários disponíveis</span>
+                    </div>
+
+                    <div class="d-flex align-items-center">
+                        <span class="badge" style="background-color: #dc3545; width: 20px; height: 20px;">&nbsp;</span>
+                        <span class="ms-2 text-muted">Horários Esgotados</span>
+                    </div>
+                
+                </div>
+            </div>
+
+            <div id="calendar-container" class="card shadow-sm">
+                <div class="card-body">
+                    <div id="calendar"></div>
+                </div>
+            </div>
+
         </div>
     </div>
-    <!-- Footer -->
+
+    <script>
+        // Aguarda o DOM (estrutura HTML) ser totalmente carregado
+        document.addEventListener('DOMContentLoaded', function() {
+
+            // Referências aos elementos HTML
+            var calendarEl = document.getElementById('calendar');
+            var scheduleButton = document.getElementById('btnScheduling'); // Botão "Agendamento"
+            var calendar; // Variável para a instância do calendário
+
+            // Inicializa o FullCalendar
+            calendar = new FullCalendar.Calendar(calendarEl, {
+
+                themeSystem: 'bootstrap5', // Aplica o tema visual do Bootstrap
+
+                // Configuração dos botões do cabeçalho
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                },
+
+                initialView: 'dayGridMonth', // Visão inicial de "Mês"
+                locale: 'pt-br', // Tradução para português
+
+                // Textos dos botões de visualização
+                buttonText: {
+                    today: 'Hoje',
+                    month: 'Mês',
+                    week: 'Semana',
+                    day: 'Dia'
+                },
+
+                // Fonte dos eventos, busca os dados da URL (endpoint JSON)
+                events: 'index.php?action=getSchedulesJson',
+
+                // Função chamada ao clicar em um dia VAZIO no calendário
+                dateClick: function(info) {
+                    // Se estiver na visão "Mês", muda para a visão "Dia"
+                    if (calendar.view.type === 'dayGridMonth') {
+                        calendar.changeView('timeGridDay', info.dateStr);
+                    }
+                },
+
+                // Função chamada ao clicar em um EVENTO (o fundo colorido)
+                eventClick: function(info) {
+                    // Se estiver na visão "Mês", muda para a visão "Dia"
+                    if (calendar.view.type === 'dayGridMonth') {
+                        // info.event.startStr contém a data (ex: '2025-11-14')
+                        calendar.changeView('timeGridDay', info.event.startStr);
+                    }
+                },
+            });
+
+            // Lógica para renderizar o calendário
+            // O calendário só é desenhado na primeira vez que a aba "Agendamento" é clicada
+            scheduleButton.addEventListener('click', function() {
+                setTimeout(function() {
+                    calendar.render();
+                    calendar.updateSize(); // Ajusta o tamanho
+                }, 10); // Pequeno delay para garantir que o <div> está visível
+            }, {
+                once: true
+            }); // O 'once: true' garante que isso rode apenas uma vez
+        });
+    </script>
+
     <?php require __DIR__ . '/partials/footer.php'; ?>
 
 </body>

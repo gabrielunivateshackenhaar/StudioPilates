@@ -83,8 +83,12 @@ switch ($action) {
         $scheduleController->saveSchedule();
         break;
 
+    case 'getSchedulesJson':
+        $scheduleController->getSchedulesJson();
+        break;
+
     // Default: redireciona para home
     default:
-        $controller->home();
+        $userController->home();
         break;
 }
