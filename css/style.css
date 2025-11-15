@@ -16,3 +16,21 @@ footer {
     width: 100%;
     /* Adicione outros estilos de cor/fundo se quiser */
 }
+
+
+/* Ajuste FullCalendar */
+
+/* Esconde o *evento* de fundo verde
+* que aparece na coluna de horários.
+*/
+.fc-timeGridWeek-view .fc-bg-event,
+.fc-timeGridDay-view .fc-bg-event {
+    display: none !important;
+}
+
+
+/* Mantém a opacidade sólida na visão Mês
+*/
+.fc .fc-bg-event {
+    opacity: 1 !important;
+}

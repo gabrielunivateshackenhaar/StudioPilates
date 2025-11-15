@@ -80,11 +80,14 @@ class ScheduleController {
         // Verifica se o usuário logado é um Admin
         $isAdmin = (isset($_SESSION['user_id']) && $_SESSION['user_category'] == Category::ADMIN->value);
 
-        // Busca todos os horários cadastrados, com o nome do admin (via JOIN)
+        // Busca todos os horários cadastrados
         $schedulesFromDB = $this->scheduleModel->getAll();
 
         // Array que será convertido em JSON
         $events = [];
+        
+        // Array temporário para agrupar eventos de fundo por dia
+        $daySummary = [];
         
         foreach ($schedulesFromDB as $schedule) {
             
@@ -93,15 +96,12 @@ class ScheduleController {
                 continue; // Pula para o próximo horário
             }
 
-            // Formata o início (ex: '2025-11-14T08:00:00')
+            // --- PARTE 1: Adiciona o evento de BLOCO (para visão Semana/Dia) ---
             $start = $schedule['date'] . 'T' . $schedule['time'];
-            
-            // Calcula o fim com base na duração (ex: 08:00 + 60 min = 09:00)
             $endDate = new DateTime($start);
             $endDate->modify('+' . $schedule['duration_minutes'] . ' minutes');
             $end = $endDate->format('Y-m-d\TH:i:s');
 
-            // Define o título e a cor com base no tipo de usuário
             $title = '';
             $backgroundColor = '';
 
@@ -110,11 +110,12 @@ class ScheduleController {
                 $title = "Vagas: " . $schedule['capacity'];
                 $backgroundColor = ($schedule['active'] == 1) ? '#28a745' : '#6c757d'; // Verde (ativo) ou Cinza (inativo)
             } else {
+                // Aluno normal
                 $title = 'Horário Disponível';
                 $backgroundColor = '#28a745';
             }
             
-            // Adiciona o evento formatado ao array
+            // Adiciona o evento de BLOCO formatado ao array
             $events[] = [
                 'id'    => $schedule['id'],
                 'title' => $title,
@@ -122,9 +123,55 @@ class ScheduleController {
                 'end'   => $end,
                 'backgroundColor' => $backgroundColor
             ];
+
+
+            // --- PARTE 2: Prepara o evento de FUNDO (para visão Mês) ---
+            $date = $schedule['date']; // Apenas a data, ex: '2025-11-14'
+
+            // Inicializa o dia se for a primeira vez
+            if (!isset($daySummary[$date])) {
+                $daySummary[$date] = [
+                    'hasActive' => false,
+                    'hasInactive' => false
+                    // (Aqui podemos adicionar lógica de 'esgotado' no futuro)
+                ];
+            }
+
+            // Define o status do dia
+            if ($schedule['active'] == 1) {
+                $daySummary[$date]['hasActive'] = true;
+            } else {
+                $daySummary[$date]['hasInactive'] = true;
+            }
         }
 
-        // Define o cabeçalho como JSON e imprime o array
+        // --- PARTE 3: Processa os eventos de FUNDO e adiciona ao array ---
+        foreach ($daySummary as $date => $status) {
+            
+            $backgroundEvent = [
+                'start'   => $date,       // Define como evento de dia inteiro
+                'allDay'  => true,       // Confirma
+                'display' => 'background' // FORÇA a renderização como fundo
+            ];
+
+            if ($status['hasActive']) {
+                // $backgroundEvent['backgroundColor'] = '#28a745'; // Verde
+                // Ao não definir cor, o FullCalendar usará a cor padrão do tema.
+            } 
+            // else if ($status['isFull']) { // Lógica futura
+            //    $backgroundEvent['backgroundColor'] = '#dc3545'; // Vermelho
+            // }
+            else if ($isAdmin && $status['hasInactive']) {
+                $backgroundEvent['backgroundColor'] = '#6c757d'; // Cinza (só admin vê)
+            } else {
+                continue; // Não gera evento de fundo se não houver nada
+            }
+
+            $events[] = $backgroundEvent; // Adiciona o evento de fundo ao array
+        }
+
+
+        // Define o cabeçalho como JSON e imprime o array (com os dois tipos de evento)
         header('Content-Type: application/json');
         echo json_encode($events);
         exit;
