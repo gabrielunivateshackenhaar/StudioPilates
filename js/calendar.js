@@ -17,6 +17,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
         themeSystem: 'bootstrap5', // Aplica o tema visual do Bootstrap
 
+        height: 'auto', // Força o calendário a se ajustar ao conteúdo (remove espaço branco)
+
         // Configuração dos botões do cabeçalho
         headerToolbar: {
             left: 'prev,next today',
@@ -43,12 +45,16 @@ document.addEventListener('DOMContentLoaded', function () {
 
             // Configuração da visão Semana
             timeGridWeek: {
-                allDaySlot: false // Esconde a linha "all-day" no topo
+                allDaySlot: false, // Esconde a linha "all-day" no topo
+                slotMinTime: '06:00:00', // Inicia o calendário às 06:00
+                slotMaxTime: '19:00:00'  // Termina o calendário às 18:00
             },
 
             // Configuração da visão Dia
             timeGridDay: {
-                allDaySlot: false // Esconde a linha "all-day" no topo
+                allDaySlot: false, // Esconde a linha "all-day" no topo
+                slotMinTime: '06:00:00', // Inicia o calendário às 06:00
+                slotMaxTime: '19:00:00'  // Termina o calendário às 18:00
             }
         },
 
