@@ -1,36 +1,812 @@
-/* 1. Define o corpo da página para usar Flexbox e ocupar 100% da altura da viewport */
+/* =====================
+   IMPORTS DE FONTES
+======================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Montserrat:wght@400;500;600&family=Questrial&family=Poppins:wght@500;600&display=swap');
+
+
+/* =====================
+     TOKENS DE ESTILO 
+======================== */
+:root {
+    /* CORES */
+    --verde-pilates: #0d493e;
+    --verde-hover: #275F53;
+    --verde-claro: #E8F2EF;
+    --texto-escuro: #1F4F46;
+    --texto-paragrafo: #444;
+    --branco: #ffffff;
+
+    /* TIPOGRAFIA */
+    --font-h1-h2: 'Cormorant Garamond', serif;
+    --font-subtitle: 'Montserrat', sans-serif;
+    --font-paragraph: 'Questrial', sans-serif;
+    --font-cta: 'Poppins', sans-serif;
+    --font-navbar: 'Montserrat', sans-serif;
+    --font-card: 'Poppins', sans-serif;
+    --font-footer: 'Montserrat', sans-serif;
+
+    /* TAMANHOS DE FONTE */
+    --h2-desktop: 2.1rem;
+    --h2-mobile: 1.7rem;
+    --paragraph-desktop: 1.05rem;
+    --paragraph-mobile: 1rem;
+
+    /* ESPAÇAMENTO */
+    --spacing-title-bottom: 18px;
+    --spacing-text-bottom: 18px;
+}
+
+/* ================
+     BASE GLOBAL
+=================== */
 body {
-    display: flex;             /* Habilita o Flexbox */
-    flex-direction: column;    /* Organiza os filhos verticalmente */
-    min-height: 100vh;         /* Ocupa no mínimo a altura da tela */
-    margin: 0;                 /* Remove margens padrão */
+    font-family: var(--font-paragraph);
+    color: var(--texto-paragrafo);
+    background-color: var(--branco);
 }
 
-/* 2. Garante que o conteúdo principal ocupe todo o espaço restante e empurre o rodapé */
-#main-content-wrapper {
-    flex-grow: 1;              /* Faz com que este elemento "cresça" e empurre o rodapé para baixo */
+/* ESTILIZAÇÃO GLOBAL DE TÍTULOS E PARÁGRAFOS */
+h1, h2 {
+    font-family: var(--font-h1-h2);
+    letter-spacing: 0.4px;
+    color: var(--texto-escuro);
 }
 
-/* 3. Ajuste básico para o rodapé (opcional) */
-footer {
+h3, h4, h5, h6 {
+    font-family: var(--font-subtitle);
+}
+
+p, span, li, strong {
+    font-family: var(--font-paragraph);
+}
+
+/* Padronização global de parágrafos */
+.section-text,
+.texto-secao,
+.sobre-texto p,
+.bloco-historia p {
+    font-size: var(--paragraph-desktop) !important;
+    line-height: 1.65 !important;
+    color: var(--texto-paragrafo);
+    margin-bottom: var(--spacing-text-bottom);
+    max-width: 95%;
+}
+
+/* ===========
+     NAVBAR
+============== */
+.custom-navbar {
+    background-color: var(--branco) !important;
+    padding: 14px 0;
+    position: sticky;
+    top: 0;
+    z-index: 999;
+    backdrop-filter: blur(6px);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+    font-family: var(--font-navbar);
+}
+
+.navbar-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+}
+
+.navbar-space {
+    width: 40px;
+}
+
+.logo-img {
+    height: 60px;
+    object-fit: contain;
+}
+
+.btn-login {
+    background: transparent;
+    border: none;
+    color: var(--verde-pilates) !important;
+    font-size: 1.8rem;
+    padding: 4px 10px;
+    transition: transform .2s ease, color .2s ease;
+    font-family: var(--font-navbar);
+}
+
+.btn-login:hover {
+    transform: translateY(-2px);
+    color: var(--verde-hover) !important;
+}
+
+@media (max-width: 768px) {
+    .btn-login { font-size: 1.6rem; padding: 6px; }
+    .navbar-space { width: 30px; }
+    .logo-img { height: 48px; }
+}
+
+/* =========================
+     SEÇÃO HOME / TÍTULOS
+============================ */
+
+.section-home { margin-top: 60px; }
+
+.home-section { padding: 80px 0; }
+
+/* TITULAÇÃO PRINCIPAL */
+.section-title,
+.titulo-secao {
+    font-size: var(--h2-desktop);
+    font-weight: 600;
+    font-family: var(--font-h1-h2);
+    color: var(--texto-escuro);
+    letter-spacing: 0.2px;
+    margin-bottom: var(--spacing-title-bottom);
+    line-height: 1.2;
+}
+
+/* Texto */
+.section-text {
+    font-size: var(--paragraph-desktop);
+    color: var(--texto-paragrafo);
+    line-height: 1.7;
+    font-family: var(--font-paragraph);
+}
+
+/* =================================
+      SOBRE TALYA (IMAGEM + TEXTO)
+==================================== */
+
+.home-section .row {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+}
+
+/* RESPONSIVO SOBRE TALYA */
+@media (max-width: 991.98px) {
+    .section-home { margin-top: 40px; }
+    .sobre-wrapper { flex-direction: column; gap: 24px; align-items: center; }
+    .section-title { margin-top: 20px; }
+}
+
+@media (max-width: 576px) {
+    .section-text { font-size: var(--paragraph-mobile); }
+}
+
+/* ==================================
+      SOBRE TALYA - BLOCO DETALHADO
+===================================== */
+
+.secao-sobre-talya {
     width: 100%;
-    /* Adicione outros estilos de cor/fundo se quiser */
+    padding: 70px 0;
+}
+
+.sobre-wrapper {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 50px;
+    flex-wrap: nowrap;
+}
+
+.sobre-texto { max-width: 48%; }
+
+.sobre-texto p {
+    margin-bottom: var(--spacing-text-bottom);
+}
+
+/* MOBILE SOBRE TALYA */
+@media (max-width: 768px) {
+    .sobre-wrapper {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .sobre-texto {
+        max-width: 92%;
+        margin: 0 auto;
+        text-align: justify;
+        padding: 0;
+    }
+}
+
+/* ==================
+     MINHA FORMAÇÃO
+=====================*/
+
+.card-imagem {
+    background: #ffffff;
+    border-radius: 18px;
+    padding: 0;
+    overflow: hidden;
+    box-shadow: 0 10px 26px rgba(0,0,0,0.06);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.card-imagem img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* Desktop */
+.historia-talya .titulo-secao {
+    font-size: var(--h2-desktop);
+    font-weight: 600;
+    color: var(--texto-escuro);
+    margin-bottom: var(--spacing-title-bottom);
+    margin-top: 18px;
+    font-family: var(--font-h1-h2);
+}
+
+.historia-talya .texto-secao {
+    font-size: var(--paragraph-desktop);
+    color: var(--texto-paragrafo);
+    line-height: 1.7;
+    text-align: left;
+    font-family: var(--font-paragraph);
+}
+
+/* MOBILE */
+@media (max-width: 768px) {
+    .bloco-historia { padding: 0 14px; text-align: justify; }
+    .historia-talya .row { flex-direction: column !important; gap: 25px; }
+
+    .secao-sobre-talya .card-imagem,
+    .historia-talya .card-imagem {
+        width: 92%;
+        margin: 0 auto 18px auto;
+        border-radius: 16px;
+    }
+
+    .historia-talya .texto-secao { width: 92%; margin: 0 auto; font-size: var(--paragraph-mobile); line-height: 1.6; }
+
+    .historia-talya .titulo-secao {
+        width: 92%;
+        margin: 18px auto;
+        font-size: var(--h2-mobile);
+        text-align: left;
+    }
+}
+
+/* ==================================
+      CARDS "PARA QUEM É O PILATES?"
+===================================== */
+
+.publico-cards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 26px;
+    width: 100%;
+}
+
+.publico-card-wrapper {
+    display: flex;
+    justify-content: center;
+}
+
+.publico-card {
+    width: 100%;
+    max-width: 290px;
+    min-height: 255px;
+    background: var(--verde-pilates);
+    border-radius: 18px;
+    padding: 26px 22px;
+    color: #fff;
+    text-align: center;
+    box-shadow: 0 10px 26px rgba(0,0,0,0.08);
+    transition: all .28s ease-in-out;
+    border: 1px solid transparent;
+    font-family: var(--font-card);
+}
+
+.icon-publico { font-size: 2.3rem; transition: transform .25s ease; }
+
+.publico-card:hover {
+    transform: translateY(-8px) scale(1.03);
+    box-shadow: 0 18px 40px rgba(0,0,0,0.12);
+    border-color: #fff;
+}
+
+.publico-card:hover .icon-publico {
+    transform: scale(1.18);
+}
+
+/* Tablet */
+@media (max-width: 991px) {
+    .publico-cards { grid-template-columns: repeat(2, 1fr); gap: 22px; }
+    .publico-card { min-height: 240px; }
+}
+
+/* Mobile */
+@media (max-width: 576px) {
+    .publico-cards { grid-template-columns: repeat(2, 1fr); gap: 14px; padding: 0 10px; }
+    .publico-card { min-height: 215px; padding: 20px 14px; }
+    .publico-card h4 { font-size: 1rem; font-family: var(--font-subtitle); }
+    .publico-card p { font-size: var(--paragraph-mobile); max-width: 95%; font-family: var(--font-paragraph); }
+    .icon-publico { font-size: 2rem; }
+}
+
+@media (hover: none) {
+    .publico-card:active {
+        transform: scale(.97);
+        box-shadow: 0 14px 30px rgba(0,0,0,0.15);
+    }
+}
+
+/* =============
+     CTA FINAL
+================ */
+
+.secao-faixa-verde {
+    position: relative;
+    width: 100%;
+    background: var(--verde-claro);
+    padding: 140px 0;
+    overflow: visible;
+}
+
+.onda-superior, .onda-inferior {
+    position: absolute; left: 0; width: 100%; z-index: 2; pointer-events: none;
+}
+
+.onda-superior svg, .onda-inferior svg {
+    width: 100%; height: 110px; display: block;
+    fill: var(--branco);
+}
+
+.onda-superior { top: -1px; }
+.onda-inferior { bottom: -1px; }
+
+.bloco-historia, .bloco-cta {
+    position: relative;
+    z-index: 5;
+}
+
+.cta-btn {
+    display: inline-block;
+    background-color: var(--verde-pilates);
+    color: var(--branco);
+    padding: 14px 36px;
+    font-size: 1.1rem;
+    border-radius: 12px;
+    text-decoration: none;
+    transition: .2s ease;
+    font-family: var(--font-cta);
+}
+
+.cta-btn:hover { background: #0c2e28; }
+
+/* ===========
+     FOOTER
+============== */
+
+.footer-custom {
+    background: var(--verde-pilates);
+    padding: 30px 20px;
+    color: var(--branco);
+    margin-top: 60px;
+    text-align: center;
+    font-family: var(--font-footer);
+}
+
+.footer-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 14px;
+}
+
+.footer-icons a { text-decoration: none !important; }
+
+.footer-icon {
+    font-size: 1.4rem;
+    color: var(--branco);
+    margin: 0 12px;
+    transition: 0.2s ease-in-out;
+}
+
+.footer-icon:hover {
+    opacity: 0.85;
+    transform: translateY(-2px);
+}
+
+.footer-rights {
+    font-size: 0.85rem;
+    opacity: 0.85;
+    margin-top: 14px;
+}
+
+/* =========================================================
+   CORREÇÃO DE WIDTH / LAYOUT DO LOGIN
+========================================================= */
+
+/* Garantir largura total dos campos */
+.login-card .form-control,
+.login-card .input-group,
+.login-card input,
+.login-card button {
+    width: 100% !important;
+    max-width: 100% !important;
+}
+
+/* Ajuste correto do input-group */
+.login-card .input-group {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+}
+
+/* Impedir que o botão da senha fique espremido */
+.login-card .input-group button {
+    width: auto !important;
+    flex-shrink: 0 !important;
+}
+
+/* Corrigir padding e height dos campos */
+.login-card .form-control {
+    min-height: 44px;
+    padding: 10px 14px !important;
+}
+
+/* Título centralizado corretamente */
+.login-title {
+    display: block;
+    text-align: center;
+    width: 100%;
+}
+
+/* Card sem esticar verticalmente */
+.login-card {
+    display: block;
+    margin: auto;
+}
+
+/* =========================================================
+   LOGIN — ESTILO PADRÃO COM PALETA E FONTES DO SITE
+========================================================= */
+
+/* Container da página de login */
+.login-container {
+    padding: 80px 0 100px;
+}
+
+/* Centralizar a row do Bootstrap */
+.login-container .row {
+    justify-content: center;
+}
+
+/* Card de login */
+.login-card {
+    background: var(--branco);
+    border-radius: 18px;
+    padding: 32px 30px 36px;
+    box-shadow: 0 14px 36px rgba(0,0,0,0.10);
+    border: 1px solid rgba(0,0,0,0.05);
+}
+
+/* Título */
+.login-title {
+    font-family: var(--font-h1-h2);       /* Cormorant */
+    font-size: 2rem;
+    font-weight: 600;
+    text-align: center;
+    color: var(--texto-escuro);
+    margin-bottom: 26px;
+    letter-spacing: 0.4px;
+}
+
+/* Labels */
+.login-card .form-label {
+    font-family: var(--font-subtitle);    /* Montserrat */
+    font-size: 0.95rem;
+    color: var(--texto-escuro);
+    font-weight: 500;
+    margin-bottom: 4px;
+}
+
+/* Campos */
+.login-card .form-control {
+    font-family: var(--font-paragraph);   /* Questrial */
+    font-size: 1rem;
+    border-radius: 10px;
+    border: 1px solid rgba(0,0,0,0.18);
+    padding: 11px 14px;
+    transition: 0.2s ease-in-out;
+}
+
+.login-card .form-control:focus {
+    border-color: var(--verde-pilates);
+    box-shadow: 0 0 0 3px rgba(13,73,62,0.13);
+}
+
+/* Input de senha + botão olho */
+.login-card .input-group {
+    align-items: stretch;
+}
+
+.login-card .input-group .form-control {
+    border-right: 0;
+}
+
+.login-card #togglePassword {
+    border-radius: 0 10px 10px 0;
+    border: 1px solid rgba(0,0,0,0.18);
+    border-left: 0;
+    background: var(--branco);
+    padding: 0 14px;
+    transition: 0.2s;
+}
+
+.login-card #togglePassword:hover {
+    background: var(--verde-claro);
+}
+
+/* Botão Entrar */
+.btn-login-submit {
+    background: var(--verde-pilates);
+    color: var(--branco);
+    font-family: var(--font-cta);        /* Poppins */
+    font-size: 1rem;
+    border: none;
+    padding: 12px 0;
+    border-radius: 11px;
+    margin: 14px 0 10px;
+    transition: 0.23s;
+}
+
+.btn-login-submit:hover {
+    background: var(--verde-hover);
+    transform: translateY(-2px);
+}
+
+/* Texto e link de cadastro */
+.login-card .text-center span {
+    font-size: 0.95rem;
+    font-family: var(--font-paragraph);
+}
+
+.link-register {
+    font-family: var(--font-subtitle);   /* Montserrat */
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--verde-pilates);
+    text-decoration: none;
+}
+
+.link-register:hover {
+    text-decoration: underline;
+}
+
+/* Responsivo */
+@media (max-width: 576px) {
+    .login-container {
+        padding: 55px 0 75px;
+    }
+
+    .login-card {
+        padding: 26px 20px 30px;
+    }
+
+    .login-title {
+        font-size: 1.7rem;
+    }
 }
 
 
-/* Ajuste FullCalendar */
+/* ============================
+   ESTILOS EXCLUSIVOS REGISTER
+=============================== */
 
-/* Esconde o *evento* de fundo verde
-* que aparece na coluna de horários.
-*/
-.fc-timeGridWeek-view .fc-bg-event,
-.fc-timeGridDay-view .fc-bg-event {
-    display: none !important;
+/* Centralização e layout principal */
+.register-wrapper {
+    max-width: 650px;
+    margin: 0 auto;
 }
 
-
-/* Mantém a opacidade sólida na visão Mês
-*/
-.fc .fc-bg-event {
-    opacity: 1 !important;
+/* Título */
+.register-title {
+    font-family: var(--font-h1-h2);
+    color: var(--texto-escuro);
+    text-align: center;
+    margin-bottom: 25px;
+    font-size: 1.9rem;
 }
+
+/* Campos */
+.register-card .form-control,
+.register-card .form-select {
+    width: 100%;
+    max-width: 100%;
+    min-height: 46px;
+    padding: 10px 14px !important;
+    border-radius: 10px;
+    border: 1px solid #d8d8d8;
+    font-family: var(--font-paragraph);
+}
+
+/* Label */
+.register-card label {
+    font-family: var(--font-subtitle);
+    color: var(--texto-escuro);
+    font-weight: 500;
+}
+
+/* Botões */
+.btn-register-submit,
+.btn-register-cancel {
+    width: 100%;
+    height: 46px;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-family: var(--font-cta);
+    transition: 0.25s ease-in-out;
+}
+
+/* Cancelar (mesmo estilo neutro do Login) */
+.btn-register-cancel {
+    background-color: #ffffff;
+    border: 1px solid var(--verde-pilates);
+    color: var(--verde-pilates);
+}
+.btn-register-cancel:hover {
+    background-color: var(--verde-claro);
+}
+
+/* Cadastrar (mesmo do Login) */
+.btn-register-submit {
+    background-color: var(--verde-pilates);
+    color: #fff;
+    border: none;
+}
+.btn-register-submit:hover {
+    background-color: var(--verde-hover);
+}
+
+/* Link inferior */
+.register-login-link a {
+    color: var(--verde-pilates);
+    font-weight: 600;
+    text-decoration: none;
+}
+.register-login-link a:hover {
+    color: var(--verde-hover);
+    text-decoration: underline;
+}
+
+/* Ajuste mobile */
+@media (max-width: 576px) {
+    .register-title { font-size: 1.6rem; }
+}
+
+/* ==========
+   REGISTER 
+=============*/
+
+.register-card {
+    background: #ffffff;
+    border-radius: 18px;
+    box-shadow: 0 8px 26px rgba(0,0,0,0.08);
+    padding: 48px 50px;
+    width: 100%;
+    max-width: 880px;
+    margin-top: 0px; 
+}
+
+/* Remover qualquer animação / hover */
+.register-card:hover {
+    transform: none !important;
+}
+
+/* TÍTULO CENTRAL PADRÃO LOGIN */
+
+.register-title {
+    font-family: var(--font-h1-h2);
+    font-size: 2rem;
+    text-align: center;
+    color: var(--texto-escuro);
+    margin-bottom: 35px;
+}
+
+/* CAMPOS */
+
+.register-card label {
+    font-family: var(--font-subtitle);
+    font-weight: 500;
+    color: var(--texto-escuro);
+    margin-bottom: 6px;
+}
+
+.register-card .form-control,
+.register-card .form-select {
+    border-radius: 11px;
+    height: 46px;
+    border: 1.4px solid #d9d9d9;
+    font-family: var(--font-paragraph);
+    font-size: 0.97rem;
+    transition: border-color .18s ease, box-shadow .18s ease;
+    background-color: #ffffff;
+}
+
+.register-card .form-control:focus,
+.register-card .form-select:focus {
+    border-color: var(--verde-pilates);
+    box-shadow: 0 0 0 2px rgba(13, 73, 62, 0.18);
+}
+
+/* BOTÕES */
+
+.register-actions {
+    display: flex;
+    gap: 18px;
+    margin-top: 25px;
+}
+
+.register-card .btn-cancel,
+.register-card .btn-register {
+    flex: 1;
+    font-family: var(--font-cta);
+    border-radius: 10px;
+    font-size: 1rem;
+    padding: 12px;
+}
+
+/* Cancelar */
+.register-card .btn-cancel {
+    background: transparent;
+    color: var(--verde-pilates);
+    border: 2px solid var(--verde-pilates);
+    transition: .25s;
+}
+
+.register-card .btn-cancel:hover {
+    background: var(--verde-pilates);
+    color: #fff;
+}
+
+/* Cadastrar */
+.register-card .btn-register {
+    background: var(--verde-pilates);
+    color: #fff;
+    border: none;
+    transition: .25s;
+}
+
+.register-card .btn-register:hover {
+    background: var(--verde-hover);
+}
+
+/* LINK FINAL */
+
+.register-card .login-link {
+    text-align: center;
+    margin-top: 18px;
+    font-size: .95rem;
+}
+
+.register-card .login-link a {
+    color: var(--verde-pilates);
+    font-weight: 500;
+    text-decoration: none;
+}
+
+.register-card .login-link a:hover {
+    text-decoration: underline;
+}
+
+/* RESPONSIVO */
+
+@media (max-width: 992px) {
+    .register-card {
+        max-width: 92%;
+        padding: 40px 28px;
+    }
+}
+
+@media (max-width: 576px) {
+    .register-actions {
+        flex-direction: column;
+    }
+}
+

@@ -3,7 +3,8 @@
 ?>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Studio Pilates</title>
+<link rel="icon" type="image/x-icon" href="img/favicon/favicon.ico">
+<title>Pilates e Bem-Estar • Talya Portaluppi</title>
 
 <!-- Bootstrap CSS -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">

@@ -133,12 +133,12 @@ $isAdminRegister = $isAdminRegister ?? false;   // padrão: false
 
   <div class="row mt-4">
     <div class="col-6 ps-2">
-      <button type="button" class="btn btn-secondary w-100" onclick="window.history.back(); return false;">
+      <button type="button" class="btn-register-cancel w-100" onclick="window.history.back(); return false;">
         Cancelar
       </button>
     </div>
     <div class="col-6 pe-2">
-      <button type="submit" class="btn btn-primary w-100">
+      <button type="submit" class="btn-register-submit w-100">
         <?= $isEdit ? 'Salvar Alterações' : 'Cadastrar' ?>
       </button>
     </div>

@@ -1,33 +1,44 @@
+<?php
+// view/register.php
+?>
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
+
 <head>
     <?php require __DIR__ . '/partials/head.php'; ?>
 </head>
+
 <body>
     <div id="main-content-wrapper">
-        <!-- Navbar -->
+
+        <!-- NAVBAR -->
         <?php require __DIR__ . '/partials/navbar.php'; ?>
 
+        <!-- CONTEÚDO -->
         <div class="container my-5">
             <div class="row justify-content-center">
-                <div class="col-md-8 col-lg-6">
-                    <div class="card shadow-sm">
-                        <div class="card-body p-4">
-                            <h3 class="text-center mb-4">Cadastro de Usuário</h3>
+                <div class="col-md-10 col-lg-8">
 
-                            <?php
-                            // Para registro, usar o action padrão (register).
-                            // Não passar $user nem $formAction, assim o partial usa os defaults.
+                    <!-- CARD PRINCIPAL -->
+                    <div class="register-card">
+
+                        <!-- TÍTULO -->
+                        <h3 class="register-title">Cadastro de Usuário</h3>
+
+                        <!-- FORM -->
+                        <?php
+                            // Não passar $user nem $formAction para manter o comportamento padrão do registro
                             require __DIR__ . '/partials/user_form.php';
-                            ?>
+                        ?>
 
-                        </div>
                     </div>
                 </div>
             </div>
         </div>
+
     </div>
-    <!-- Footer -->
+
+    <!-- FOOTER -->
     <?php require __DIR__ . '/partials/footer.php'; ?>
 
 </body>

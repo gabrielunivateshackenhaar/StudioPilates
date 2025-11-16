@@ -13,12 +13,12 @@
         <!-- Navbar -->
         <?php require __DIR__ . '/partials/navbar.php'; ?>
 
-        <div class="container mt-5">
+        <div class="container login-container">
             <div class="row justify-content-center">
                 <div class="col-md-6 col-lg-5">
-                    <div class="card shadow-sm">
+                    <div class="login-card">
                         <div class="card-body">
-                            <h4 class="card-title text-center mb-4">Login</h4>
+                            <h4 class="login-title">Login</h4>
 
                             <?php if (!empty($errorMessage)): ?>
                             <div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -46,13 +46,13 @@
                                         <div class="invalid-feedback">Informe sua senha.</div>
                                     </div>
                                 </div>
-                                <button type="submit" class="btn btn-primary w-100">Entrar</button>
+                                <button type="submit" class="btn-login-submit w-100">Entrar</button>
                             </form>
 
                             <hr>
                             <div class="text-center">
                                 <span>Ainda não possui uma conta?</span><br>
-                                <a href="index.php?action=register" class="btn btn-link">Cadastre-se</a>
+                                <a href="index.php?action=register" class="link-register">Cadastre-se</a>
                             </div>
                         </div>
                     </div>
