@@ -80,6 +80,29 @@ document.addEventListener('DOMContentLoaded', function () {
             if (calendar.view.type === 'dayGridMonth') {
                 // info.event.startStr contém a data (ex: '2025-11-14')
                 calendar.changeView('timeGridDay', info.event.startStr);
+            // verifica se o usuário está logado e manda para tela de login
+            } else if (SESSION_USER_ID === null) {
+                alert("Você precisa estar logado para realizar esta ação!");
+                window.location.href = "index.php?action=login";
+                return;
+            // manda as informações do agendamento via post pro controller
+            } else {
+                const formData = new FormData();
+                formData.append("schedule_id", info.event.id);
+
+                fetch("controller/BookingController.php?action=saveBooking", {
+                    method: "POST",
+                    body: formData
+                })
+                .then(resp => resp.json())
+                .then(data => {
+                    if (data.status === "ok") {
+                        alert("Agendamento salvo!");
+                        calendar.refetchEvents();
+                    } else {
+                        alert("Erro: " + data.msg);
+                    }
+                });
             }
         },
     });
