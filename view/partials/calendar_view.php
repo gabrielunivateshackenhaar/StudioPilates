@@ -2,7 +2,9 @@
     <?php
     // view/partials/calendar_view.php
     // Contém o HTML da legenda e do container do calendário
+    $user_id = $_SESSION['user_id'] ?? null;
     ?>
+    <script>const SESSION_USER_ID = <?= json_encode($user_id) ?>;</script>
     <div class="card shadow-sm mb-3">
         <div class="card-body d-flex flex-wrap align-items-center justify-content-center gap-3">
 
