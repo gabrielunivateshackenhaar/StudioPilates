@@ -1,0 +1,17 @@
+/* ============================
+   AJUSTES DO FULLCALENDAR
+=============================== */
+
+/* Esconde o *evento* de fundo verde
+* que aparece na coluna de horários nas visões Semana/Dia.
+*/
+.fc-timeGridWeek-view .fc-bg-event,
+.fc-timeGridDay-view .fc-bg-event {
+    display: none !important;
+}
+
+/* Mantém a opacidade sólida na visão Mês
+*/
+.fc .fc-bg-event {
+    opacity: 1 !important;
+}
