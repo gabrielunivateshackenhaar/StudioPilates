@@ -80,6 +80,10 @@ document.addEventListener('DOMContentLoaded', function () {
             if (calendar.view.type === 'dayGridMonth') {
                 // info.event.startStr contém a data (ex: '2025-11-14')
                 calendar.changeView('timeGridDay', info.event.startStr);
+            // Se o evento clicado estiver esgotado, avisa e para.
+            } else if (info.event.title.includes('Esgotado')) {
+                alert('Desculpe, este horários já está esgotado!');
+                return;
             // verifica se o usuário está logado e manda para tela de login
             } else if (SESSION_USER_ID === null) {
                 alert("Você precisa estar logado para realizar esta ação!");
@@ -87,6 +91,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 return;
             // manda as informações do agendamento via post pro controller
             } else {
+
+                // Confirmação
+                if (!confirm("Confirmar agendamento para este horário?")) {
+                    return; // Usuário clicou em 'Cancelar'
+                }
+
                 const formData = new FormData();
                 formData.append("schedule_id", info.event.id);
 

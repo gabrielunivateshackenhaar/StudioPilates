@@ -30,12 +30,18 @@ class Schedule {
     }
 
     /**
-     * Busca todos os horários, trazendo o nome do admin que criou
+     * Busca todos os horários, trazendo o nome do admin e a contagem de agendados
      */
     public function getAll() {
-        // LEFT JOIN para pegar o 'name' da tabela 'users'
+        // Usamos um Sub-SELECT para contar os agendamentos (bookings)
+        // para cada horário (schedule), filtrando apenas por status = 0 (Confirmado)
         $stmt = $this->pdo->query("
-            SELECT s.*, u.name as admin_name 
+            SELECT 
+                s.*, 
+                u.name as admin_name,
+                (SELECT COUNT(*) 
+                 FROM bookings b 
+                 WHERE b.schedule_id = s.id AND b.status = 0) as bookings_count
             FROM schedules s
             LEFT JOIN users u ON s.created_by = u.id
             ORDER BY s.date DESC, s.time DESC

@@ -23,7 +23,8 @@ $schedules = $schedules ?? [];
                         <tr>
                             <th>Data</th>
                             <th>Hora</th>
-                            <th>Duração</th> <th>Vagas</th>
+                            <th>Duração</th> 
+                            <th>Vagas</th>
                             <th>Status</th>
                             <th>Criado por</th>
                             <th class="text-center">Ações</th>
@@ -34,7 +35,14 @@ $schedules = $schedules ?? [];
                             <tr>
                                 <td><?= (new DateTime($s['date']))->format('d/m/Y') ?></td>
                                 <td><?= (new DateTime($s['time']))->format('H:i') ?></td>
-                                <td><?= htmlspecialchars($s['duration_minutes']) ?> min</td> <td><?= htmlspecialchars($s['capacity']) ?></td>
+                                <td><?= htmlspecialchars($s['duration_minutes']) ?> min</td> 
+                                <td>
+                                    <?php 
+                                    $bookings_count = (int)($s['bookings_count'] ?? 0);
+                                    $vagas_restantes = $s['capacity'] - $bookings_count;
+                                    echo "{$vagas_restantes} / {$s['capacity']}";
+                                    ?>
+                                </td>
                                 <td>
                                     <?php if ($s['active'] == 1): ?>
                                         <span class="badge bg-success">Ativo</span>

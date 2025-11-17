@@ -90,6 +90,12 @@ class ScheduleController {
         $daySummary = [];
         
         foreach ($schedulesFromDB as $schedule) {
+
+            // Calcula vagas
+            $bookings_count = (int)$schedule['bookings_count'];
+            $vagas_restantes = $schedule['capacity'] - $bookings_count;
+            $isFull = $vagas_restantes <= 0;
+            $isActive = $schedule['active'] == 1;
             
             // Regra de permissão: Alunos (não-admins) não podem ver horários inativos
             if (!$isAdmin && $schedule['active'] == 0) {
@@ -106,13 +112,19 @@ class ScheduleController {
             $backgroundColor = '';
 
             if ($isAdmin) {
-                // Admin vê a contagem de vagas e cores diferentes
-                $title = "Vagas: " . $schedule['capacity'];
-                $backgroundColor = ($schedule['active'] == 1) ? '#28a745' : '#6c757d'; // Verde (ativo) ou Cinza (inativo)
+                // Admin vê a contagem detalhada
+                $title = $isFull ? "Esgotado" : "Vagas: {$vagas_restantes}";
+
+                if ($isFull) {
+                    $backgroundColor = '#adb5bd'; // Cinza (Esgotado)
+                } else {
+                    $backgroundColor = $isActive ? '#28a745' : '#D6D6D6'; // Verde (Ativo) ou Cinza claro (Inativo)
+                }
+
             } else {
-                // Aluno normal
-                $title = 'Horário Disponível';
-                $backgroundColor = '#28a745';
+                // Aluno normal vê mais simples
+                $title = $isFull ? "Esgotado" : "Horário Disponível";
+                $backgroundColor = $isFull ? '#adb5bd' : '#28a745'; // Cinza (Esgotado) ou Verde (Disponível)
             }
             
             // Adiciona o evento de BLOCO formatado ao array
@@ -124,22 +136,23 @@ class ScheduleController {
                 'backgroundColor' => $backgroundColor
             ];
 
-
             // --- PARTE 2: Prepara o evento de FUNDO (para visão Mês) ---
-            $date = $schedule['date']; // Apenas a data, ex: '2025-11-14'
-
-            // Inicializa o dia se for a primeira vez
+            $date = $schedule['date'];
             if (!isset($daySummary[$date])) {
                 $daySummary[$date] = [
                     'hasActive' => false,
+                    'hasAvailable' => false, // Se tem pelo menos 1 vaga ativa
+                    'allSlotsFull' => true,  // Começa presumindo que está cheio
                     'hasInactive' => false
-                    // (Aqui podemos adicionar lógica de 'esgotado' no futuro)
                 ];
             }
 
-            // Define o status do dia
-            if ($schedule['active'] == 1) {
+            if ($isActive) {
                 $daySummary[$date]['hasActive'] = true;
+                if (!$isFull) {
+                    $daySummary[$date]['hasAvailable'] = true; // Achamos um horário com vaga
+                    $daySummary[$date]['allSlotsFull'] = false; // Portanto, o dia não está 100% cheio
+                }
             } else {
                 $daySummary[$date]['hasInactive'] = true;
             }
@@ -154,22 +167,20 @@ class ScheduleController {
                 'display' => 'background' // FORÇA a renderização como fundo
             ];
 
-            if ($status['hasActive']) {
-                // $backgroundEvent['backgroundColor'] = '#28a745'; // Verde
-                // Ao não definir cor, o FullCalendar usará a cor padrão do tema.
-            } 
-            // else if ($status['isFull']) { // Lógica futura
-            //    $backgroundEvent['backgroundColor'] = '#dc3545'; // Vermelho
-            // }
-            else if ($isAdmin && $status['hasInactive']) {
-                $backgroundEvent['backgroundColor'] = '#6c757d'; // Cinza (só admin vê)
+            if ($status['hasAvailable']) {
+                $backgroundEvent['backgroundColor'] = '#28a745';
+            } else if ($status['hasActive'] && $status['allSlotsFull']) {
+                // Tinha horários ativos, mas todos estão esgotados
+                $backgroundEvent['backgroundColor'] = '#adb5bd'; // Cinza
+            } else if ($isAdmin && $status['hasInactive']) {
+                // Só tinha horários inativos (e o usuário é admin)
+                $backgroundEvent['backgroundColor'] = '#D6D6D6'; // Cinza claro
             } else {
-                continue; // Não gera evento de fundo se não houver nada
+                continue;
             }
 
-            $events[] = $backgroundEvent; // Adiciona o evento de fundo ao array
+            $events[] = $backgroundEvent;
         }
-
 
         // Define o cabeçalho como JSON e imprime o array (com os dois tipos de evento)
         header('Content-Type: application/json');

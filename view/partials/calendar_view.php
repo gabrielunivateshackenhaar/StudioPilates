@@ -14,10 +14,20 @@
             </div>
 
             <div class="d-flex align-items-center">
-                <span class="badge" style="background-color: #dc3545; width: 20px; height: 20px;">&nbsp;</span>
+                <span class="badge" style="background-color: #adb5bd; width: 20px; height: 20px;">&nbsp;</span>
                 <span class="ms-2 text-muted">Horários Esgotados</span>
             </div>
 
+            <?php 
+            // Verifica se o usuário está logado E se a categoria é 1 (ADMIN)
+            if (isset($_SESSION['user_category']) && $_SESSION['user_category'] == 1): 
+            ?>
+                <div class="d-flex align-items-center">
+                    <span class="badge" style="background-color: #e9ecef; width: 20px; height: 20px;">&nbsp;</span>
+                    <span class="ms-2 text-muted">Horários inativos</span>
+                </div>
+            <?php endif; ?>
+            </div>
         </div>
     </div>
 
