@@ -6,14 +6,17 @@
 require_once __DIR__ . '/../model/User.php';
 require_once __DIR__ . '/../model/Enums.php';
 require_once __DIR__ . '/../model/Schedule.php';
+require_once __DIR__ . '/../model/Booking.php';
 
 class UserController {
     private $user;
     private $scheduleModel;
+    private $bookingModel;
 
     public function __construct($pdo) {
         $this->user = new User($pdo);
         $this->scheduleModel = new Schedule($pdo);
+        $this->bookingModel = new Booking($pdo);
     }
 
     // Tela inicial (home)
@@ -170,7 +173,7 @@ class UserController {
         exit;
     }
 
-    // Exibe o formulário com os dados do usuário logado
+    // Exibe o formulário com os dados do usuário logado e seus agendamentos
     public function profile() {
         if (!isset($_SESSION['user_id'])) {
             header("Location: index.php?action=showLogin");
@@ -178,22 +181,77 @@ class UserController {
         }
 
         $id = $_SESSION['user_id'];
-        $user = $this->user->getById($id);
 
-        if (!$user) { // Se não encontrar o usuário no banco
+        // 1. Busca dados do usuário
+        $user = $this->user->getById($id);
+        if (!$user) {
             header("Location: index.php");
             exit;
         }
 
-        // Define variáveis para o partial
-        $formAction = "index.php?action=updateProfile";
+        // 2. Busca agendamentos
+        $allBookings = $this->bookingModel->getByUserId($id);
 
-        // indica que é edição do próprio usuário
-        $isProfile = true; 
+        // 3. Separa em Futuros e Passados
+        $futureBookings = [];
+        $pastBookings = [];
+        $now = new DateTime(); // Data/Hora atual
+
+        foreach ($allBookings as $b) {
+            // Cria um objeto DateTime com a data/hora da aula
+            $classDateTime = new DateTime($b['date'] . ' ' . $b['time']);
+            
+            // Adiciona duração para saber quando a aula ACABA
+            // (opcional, mas ajuda se a aula estiver acontecendo agora)
+            $classEndTime = clone $classDateTime;
+            $classEndTime->modify("+{$b['duration_minutes']} minutes");
+
+            if ($classDateTime >= $now) {
+                $futureBookings[] = $b;
+            } else {
+                $pastBookings[] = $b;
+            }
+        }
+
+        // Define variáveis para o partial de form (para edição de dados)
+        $formAction = "index.php?action=updateProfile";
+        $isProfile = true; // Flag para saber que é perfil
         
         // Exibe a view de perfil
         require __DIR__ . '/../view/profile.php';
+    }
 
+    // Processar a atualização do PRÓPRIO perfil
+    public function updateProfile() {
+        // Verifica se está logado
+        if (!isset($_SESSION['user_id'])) {
+            header("Location: index.php?action=showLogin");
+            exit;
+        }
+
+        $id = $_SESSION['user_id']; // O ID vem da sessão (segurança)
+
+        // Coleta os dados do formulário
+        $data = [
+            'name'       => $_POST['name'] ?? '',
+            'email'      => $_POST['email'] ?? '',
+            'password'   => $_POST['password'] ?? null, // Se vazio, a model ignora
+            'birth_date' => $_POST['birth_date'] ?? '',
+            'gender'     => $_POST['gender'] ?? '',
+            'phone'      => $_POST['phone'] ?? '',
+            'profession' => $_POST['profession'] ?? '',
+            'laterality' => $_POST['laterality'] ?? '',
+        ];
+
+        // Atualiza no banco
+        $this->user->update($id, $data);
+
+        // Atualiza o nome na sessão (caso o usuário tenha mudado o nome)
+        $_SESSION['user_name'] = $data['name'];
+
+        // Redireciona de volta para o perfil com o parâmetro de sucesso
+        header("Location: index.php?action=profile&status=success");
+        exit;
     }
 
     // Exibir formulário de registro pelo Admin

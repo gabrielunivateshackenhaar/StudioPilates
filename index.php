@@ -68,6 +68,11 @@ switch ($action) {
         $userController->profile();
         break;
 
+    // Atualizar Perfil (processa o formulário)
+    case 'updateProfile':
+        $userController->updateProfile();
+        break;
+
      // Registro de usuário pelo admin
     case 'showRegisterUser':
         $userController->registerUserAdminForm();

@@ -34,4 +34,29 @@ class Booking {
         $stmt = $this->pdo->query("SELECT * FROM bookings");
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    /**
+     * Busca todos os agendamentos de um usuário específico,
+     * trazendo também os dados do horário (schedule).
+     */
+    public function getByUserId(int $userId) {
+        // JOIN para pegar a data e hora da tabela schedules
+        $sql = "
+            SELECT 
+                b.id as booking_id,
+                b.status as booking_status,
+                b.created_at,
+                s.date,
+                s.time,
+                s.duration_minutes
+            FROM bookings b
+            JOIN schedules s ON b.schedule_id = s.id
+            WHERE b.user_id = ?
+            ORDER BY s.date DESC, s.time DESC
+        ";
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([$userId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }
