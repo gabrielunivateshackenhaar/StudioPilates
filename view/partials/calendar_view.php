@@ -27,7 +27,6 @@
                     <span class="ms-2 text-muted">Horários inativos</span>
                 </div>
             <?php endif; ?>
-            </div>
         </div>
     </div>
 
