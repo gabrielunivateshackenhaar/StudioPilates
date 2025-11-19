@@ -74,46 +74,112 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         },
 
-        // Função chamada ao clicar em um EVENTO (o fundo colorido)
+        // Função chamada ao clicar em um EVENTO
         eventClick: function (info) {
-            // Se estiver na visão "Mês", muda para a visão "Dia"
+            
+            // 1. Se estiver na visão "Mês", apenas muda para a visão "Dia" (comportamento padrão)
             if (calendar.view.type === 'dayGridMonth') {
-                // info.event.startStr contém a data (ex: '2025-11-14')
                 calendar.changeView('timeGridDay', info.event.startStr);
-            // Se o evento clicado estiver esgotado, avisa e para.
-            } else if (info.event.title.includes('Esgotado')) {
-                alert('Desculpe, este horários já está esgotado!');
                 return;
-            // verifica se o usuário está logado e manda para tela de login
-            } else if (SESSION_USER_ID === null) {
-                alert("Você precisa estar logado para realizar esta ação!");
-                window.location.href = "index.php?action=login";
+            }
+
+            // 2. Verifica se o horário está esgotado
+            if (info.event.title.includes('Esgotado')) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Esgotado!',
+                    text: 'Desculpe, este horário não tem mais vagas disponíveis.',
+                    confirmButtonColor: '#d33',
+                    confirmButtonText: 'Entendi'
+                });
                 return;
-            // manda as informações do agendamento via post pro controller
-            } else {
+            }
 
-                // Confirmação
-                if (!confirm("Confirmar agendamento para este horário?")) {
-                    return; // Usuário clicou em 'Cancelar'
-                }
-
-                const formData = new FormData();
-                formData.append("schedule_id", info.event.id);
-
-                fetch("controller/BookingController.php?action=saveBooking", {
-                    method: "POST",
-                    body: formData
-                })
-                .then(resp => resp.json())
-                .then(data => {
-                    if (data.status === "ok") {
-                        alert("Agendamento salvo!");
-                        calendar.refetchEvents();
-                    } else {
-                        alert("Erro: " + data.msg);
+            // 3. Verifica se o usuário NÃO está logado
+            if (SESSION_USER_ID === null) {
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Login Necessário',
+                    text: 'Você precisa estar logado para realizar um agendamento.',
+                    showCancelButton: true,
+                    confirmButtonColor: '#28a745', // Verde Pilates
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Fazer Login',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = "index.php?action=login";
                     }
                 });
+                return;
             }
+
+            // 4. Confirmação e Agendamento (Usuário Logado e Horário Disponível)
+            
+            // Formata a data/hora para mostrar bonito no alerta
+            const dataHora = info.event.start.toLocaleString('pt-BR', { 
+                weekday: 'long', day: '2-digit', month: 'long', hour: '2-digit', minute: '2-digit' 
+            });
+
+            Swal.fire({
+                title: 'Confirmar Agendamento?',
+                html: `Deseja reservar o horário de<br><strong>${dataHora}</strong>?`,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#28a745', // Verde
+                cancelButtonColor: '#d33',     // Vermelho
+                confirmButtonText: 'Sim, reservar!',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    
+                    // Mostra um "carregando..." enquanto o servidor processa
+                    Swal.fire({
+                        title: 'Processando...',
+                        text: 'Aguarde enquanto confirmamos sua reserva.',
+                        allowOutsideClick: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+
+                    const formData = new FormData();
+                    formData.append("schedule_id", info.event.id);
+
+                    fetch("controller/BookingController.php?action=saveBooking", {
+                        method: "POST",
+                        body: formData
+                    })
+                    .then(resp => resp.json())
+                    .then(data => {
+                        if (data.status === "ok") {
+                            // Sucesso!
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Agendado!',
+                                text: 'Sua aula foi reservada com sucesso.',
+                                confirmButtonColor: '#28a745'
+                            });
+                            calendar.refetchEvents(); // Atualiza o calendário visualmente
+                        } else {
+                            // Erro do servidor (ex: vaga acabou nesse milissegundo)
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Ops!',
+                                text: 'Erro ao salvar: ' + (data.msg || 'Tente novamente.'),
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        // Erro de rede
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Erro de Conexão',
+                            text: 'Não foi possível conectar ao servidor.',
+                        });
+                    });
+                }
+            });
         },
     });
 
