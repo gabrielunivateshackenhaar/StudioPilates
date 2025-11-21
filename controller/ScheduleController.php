@@ -3,14 +3,17 @@
 
 require_once __DIR__ . '/../model/Enums.php';
 require_once __DIR__ . '/../model/Schedule.php'; 
+require_once __DIR__ . '/../model/Booking.php';
 
 class ScheduleController {
     private $pdo;
     private $scheduleModel;
+    private $bookingModel;
 
     public function __construct($pdo) {
         $this->pdo = $pdo;
         $this->scheduleModel = new Schedule($pdo);
+        $this->bookingModel = new Booking($pdo);
     }
 
     /**
@@ -79,9 +82,16 @@ class ScheduleController {
         
         // Verifica se o usuário logado é um Admin
         $isAdmin = (isset($_SESSION['user_id']) && $_SESSION['user_category'] == Category::ADMIN->value);
+        $userId = $_SESSION['user_id'] ?? null; // Pega o ID do usuário logado
 
         // Busca todos os horários cadastrados
         $schedulesFromDB = $this->scheduleModel->getAll();
+
+        // Se tiver usuário logado, busca os agendamentos dele para saber quais já reservou
+        $userBookedScheduleIds = [];
+        if ($userId) {
+            $userBookedScheduleIds = $this->bookingModel->getBookedScheduleIds($userId);
+        }
 
         // Array que será convertido em JSON
         $events = [];
@@ -96,6 +106,9 @@ class ScheduleController {
             $vagas_restantes = $schedule['capacity'] - $bookings_count;
             $isFull = $vagas_restantes <= 0;
             $isActive = $schedule['active'] == 1;
+
+            // Verifica se o usuário JÁ reservou este horário
+            $alreadyBooked = in_array($schedule['id'], $userBookedScheduleIds);
             
             // Regra de permissão: Alunos (não-admins) não podem ver horários inativos
             if (!$isAdmin && $schedule['active'] == 0) {
@@ -123,8 +136,16 @@ class ScheduleController {
 
             } else {
                 // Aluno normal vê mais simples
-                $title = $isFull ? "Esgotado" : "Horário Disponível";
-                $backgroundColor = $isFull ? '#adb5bd' : '#28a745'; // Cinza (Esgotado) ou Verde (Disponível)
+                if ($alreadyBooked) {
+                    $title = "Reservado por você!";
+                    $backgroundColor = '#17a2b8'; // Azul
+                } elseif ($isFull) {
+                    $title = "Esgotado";
+                    $backgroundColor = '#adb5bd'; // Cinza
+                } else {
+                    $title = "Horário Disponível";
+                    $backgroundColor = '#28a745'; // Verde
+                }
             }
             
             // Adiciona o evento de BLOCO formatado ao array
@@ -133,7 +154,10 @@ class ScheduleController {
                 'title' => $title,
                 'start' => $start,
                 'end'   => $end,
-                'backgroundColor' => $backgroundColor
+                'backgroundColor' => $backgroundColor,
+                'extendedProps' => [
+                    'isBooked' => $alreadyBooked
+                ]
             ];
 
             // --- PARTE 2: Prepara o evento de FUNDO (para visão Mês) ---

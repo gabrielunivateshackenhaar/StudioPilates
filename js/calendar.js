@@ -83,7 +83,19 @@ document.addEventListener('DOMContentLoaded', function () {
                 return;
             }
 
-            // 2. Verifica se o horário está esgotado
+            // 2. Verifica se o usuário já reservou este horário
+            if (info.event.extendedProps && info.event.extendedProps.isBooked) {
+                Swal.fire({
+                    icon: 'warning', // Ícone de aviso (amarelo/laranja)
+                    title: 'Já Agendado!',
+                    text: 'Você já possui uma reserva confirmada para este horário.',
+                    confirmButtonColor: '#17a2b8', // Azul combinando com o evento
+                    confirmButtonText: 'Ok'
+                });
+                return; // Para a execução aqui
+            }
+
+            // 3. Verifica se o horário está esgotado
             if (info.event.title.includes('Esgotado')) {
                 Swal.fire({
                     icon: 'error',
@@ -95,7 +107,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 return;
             }
 
-            // 3. Verifica se o usuário NÃO está logado
+            // 4. Verifica se o usuário NÃO está logado
             if (SESSION_USER_ID === null) {
                 Swal.fire({
                     icon: 'info',
@@ -114,7 +126,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 return;
             }
 
-            // 4. Confirmação e Agendamento (Usuário Logado e Horário Disponível)
+            // 5. Confirmação e Agendamento (Usuário Logado e Horário Disponível)
             
             // Formata a data/hora para mostrar bonito no alerta
             const dataHora = info.event.start.toLocaleString('pt-BR', { 

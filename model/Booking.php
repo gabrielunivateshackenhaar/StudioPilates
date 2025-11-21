@@ -59,4 +59,20 @@ class Booking {
         $stmt->execute([$userId]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    /**
+     * Retorna um array simples apenas com os IDs dos horários 
+     * que o usuário já reservou
+     */
+    public function getBookedScheduleIds(int $userId) {
+        $stmt = $this->pdo->prepare("
+            SELECT schedule_id 
+            FROM bookings 
+            WHERE user_id = ? AND status = 0
+        ");
+        $stmt->execute([$userId]);
+        
+        // FETCH_COLUMN retorna um array simples [1, 5, 8] em vez de [[id=>1], [id=>5]...]
+        return $stmt->fetchAll(PDO::FETCH_COLUMN);
+    }
 }
