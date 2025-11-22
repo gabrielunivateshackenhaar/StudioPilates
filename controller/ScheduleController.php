@@ -94,8 +94,20 @@ class ScheduleController {
 
         $events = [];
         $daySummary = [];
+
+        // Define o momento atual
+        $now = new DateTime();
         
         foreach ($schedulesFromDB as $schedule) {
+
+            // Filtro de passado (remover horários)
+            // Cria um objeto DateTime com a data e hora do horário
+            $scheduleDateTime = new DateTime($schedule['date'] . ' ' . $schedule['time']);
+
+            // Se o horário for menor (anterior) ao momento atual, pula.
+            if ($scheduleDateTime < $now) {
+                continue; 
+            }
 
             // Remover inativos (por enquanto não é utilizado)
             if ($schedule['active'] == ScheduleStatus::INACTIVE->value) {
