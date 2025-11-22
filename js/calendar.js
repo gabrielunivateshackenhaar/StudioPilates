@@ -68,18 +68,18 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Função chamada ao clicar em um dia VAZIO no calendário
         dateClick: function (info) {
-            // Se estiver na visão "Mês", muda para a visão "Dia"
+            // Se estiver na visão "Mês", muda para a visão "Semana"
             if (calendar.view.type === 'dayGridMonth') {
-                calendar.changeView('timeGridDay', info.dateStr);
+                calendar.changeView('timeGridWeek', info.dateStr);
             }
         },
 
         // Função chamada ao clicar em um EVENTO
         eventClick: function (info) {
             
-            // 1. Se estiver na visão "Mês", apenas muda para a visão "Dia" (comportamento padrão)
+            // 1. Se estiver na visão "Mês", apenas muda para a visão "Semana" (comportamento padrão)
             if (calendar.view.type === 'dayGridMonth') {
-                calendar.changeView('timeGridDay', info.event.startStr);
+                calendar.changeView('timeGridWeek', info.event.startStr);
                 return;
             }
 
