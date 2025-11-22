@@ -80,9 +80,8 @@ class ScheduleController {
     // Retorna os horários em formato json para o FullCalendar
     public function getSchedulesJson() {
         
-        // Verifica se o usuário logado é um Admin
-        $isAdmin = (isset($_SESSION['user_id']) && $_SESSION['user_category'] == Category::ADMIN->value);
-        $userId = $_SESSION['user_id'] ?? null; // Pega o ID do usuário logado
+        // Pega o ID do usuário logado (se houver)
+        $userId = $_SESSION['user_id'] ?? null; 
 
         // Busca todos os horários cadastrados
         $schedulesFromDB = $this->scheduleModel->getAll();
@@ -93,28 +92,25 @@ class ScheduleController {
             $userBookedScheduleIds = $this->bookingModel->getBookedScheduleIds($userId);
         }
 
-        // Array que será convertido em JSON
         $events = [];
-        
-        // Array temporário para agrupar eventos de fundo por dia
         $daySummary = [];
         
         foreach ($schedulesFromDB as $schedule) {
 
+            // Remover inativos (por enquanto não é utilizado)
+            if ($schedule['active'] == ScheduleStatus::INACTIVE->value) {
+                continue;
+            } 
+
             // Calcula vagas
-            $bookings_count = (int)$schedule['bookings_count'];
-            $vagas_restantes = $schedule['capacity'] - $bookings_count;
-            $isFull = $vagas_restantes <= 0;
-            $isActive = $schedule['active'] == 1;
+            $bookingsCount = (int)$schedule['bookings_count'];
+            // Vagas Restantes
+            $remainingSpots = $schedule['capacity'] - $bookingsCount;
+            $isFull = $remainingSpots <= 0;
 
             // Verifica se o usuário JÁ reservou este horário
             $alreadyBooked = in_array($schedule['id'], $userBookedScheduleIds);
             
-            // Regra de permissão: Alunos (não-admins) não podem ver horários inativos
-            if (!$isAdmin && $schedule['active'] == 0) {
-                continue; // Pula para o próximo horário
-            }
-
             // --- PARTE 1: Adiciona o evento de BLOCO (para visão Semana/Dia) ---
             $start = $schedule['date'] . 'T' . $schedule['time'];
             $endDate = new DateTime($start);
@@ -124,28 +120,19 @@ class ScheduleController {
             $title = '';
             $backgroundColor = '';
 
-            if ($isAdmin) {
-                // Admin vê a contagem detalhada
-                $title = $isFull ? "Esgotado" : "Vagas: {$vagas_restantes}";
-
-                if ($isFull) {
-                    $backgroundColor = '#adb5bd'; // Cinza (Esgotado)
-                } else {
-                    $backgroundColor = $isActive ? '#28a745' : '#D6D6D6'; // Verde (Ativo) ou Cinza claro (Inativo)
-                }
-
+            // Lógica de prioridade para Título e Cor
+            if ($alreadyBooked) {
+                // Prioridade 1: Se o usuário já reservou
+                $title = "Reservado por você!";
+                $backgroundColor = '#17a2b8';
+            } elseif ($isFull) {
+                // Prioridade 2: Se está cheio
+                $title = "Esgotado";
+                $backgroundColor = '#adb5bd';
             } else {
-                // Aluno normal vê mais simples
-                if ($alreadyBooked) {
-                    $title = "Reservado por você!";
-                    $backgroundColor = '#17a2b8'; // Azul
-                } elseif ($isFull) {
-                    $title = "Esgotado";
-                    $backgroundColor = '#adb5bd'; // Cinza
-                } else {
-                    $title = "Horário Disponível";
-                    $backgroundColor = '#28a745'; // Verde
-                }
+                // Prioridade 3: Disponível
+                $title = "Vagas: {$remainingSpots}";
+                $backgroundColor = '#28a745';
             }
             
             // Adiciona o evento de BLOCO formatado ao array
@@ -164,21 +151,15 @@ class ScheduleController {
             $date = $schedule['date'];
             if (!isset($daySummary[$date])) {
                 $daySummary[$date] = [
-                    'hasActive' => false,
                     'hasAvailable' => false, // Se tem pelo menos 1 vaga ativa
                     'allSlotsFull' => true,  // Começa presumindo que está cheio
-                    'hasInactive' => false
                 ];
             }
 
-            if ($isActive) {
-                $daySummary[$date]['hasActive'] = true;
-                if (!$isFull) {
-                    $daySummary[$date]['hasAvailable'] = true; // Achamos um horário com vaga
-                    $daySummary[$date]['allSlotsFull'] = false; // Portanto, o dia não está 100% cheio
-                }
-            } else {
-                $daySummary[$date]['hasInactive'] = true;
+            // Se chegamos aqui, o horário é ATIVO (pois os inativos foram pulados lá em cima)
+            if (!$isFull) {
+                $daySummary[$date]['hasAvailable'] = true; 
+                $daySummary[$date]['allSlotsFull'] = false;
             }
         }
 
@@ -187,18 +168,14 @@ class ScheduleController {
             
             $backgroundEvent = [
                 'start'   => $date,       // Define como evento de dia inteiro
-                'allDay'  => true,       // Confirma
+                'allDay'  => true,        // Confirma
                 'display' => 'background' // FORÇA a renderização como fundo
             ];
 
             if ($status['hasAvailable']) {
-                $backgroundEvent['backgroundColor'] = '#28a745';
-            } else if ($status['hasActive'] && $status['allSlotsFull']) {
-                // Tinha horários ativos, mas todos estão esgotados
-                $backgroundEvent['backgroundColor'] = '#adb5bd'; // Cinza
-            } else if ($isAdmin && $status['hasInactive']) {
-                // Só tinha horários inativos (e o usuário é admin)
-                $backgroundEvent['backgroundColor'] = '#D6D6D6'; // Cinza claro
+                $backgroundEvent['backgroundColor'] = '#28a745'; // Verde (Tem vaga)
+            } else if ($status['allSlotsFull']) {
+                $backgroundEvent['backgroundColor'] = '#adb5bd'; // Cinza (Tudo cheio)
             } else {
                 continue;
             }
