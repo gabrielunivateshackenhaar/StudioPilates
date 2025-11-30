@@ -46,7 +46,7 @@ try {
             Gender::MALE->value,      // gender
             Laterality::RIGHT->value, // laterality
             'User One',               // name
-            password_hash('123456', PASSWORD_DEFAULT), // password
+            password_hash('1', PASSWORD_DEFAULT), // password
             '(99) 99999-9999',        // phone
             'Student',                // profession
             1,                        // status: ATIVO
@@ -61,7 +61,7 @@ try {
             Gender::FEMALE->value,  // gender
             Laterality::LEFT->value, // laterality
             'Admin One',             // name
-            password_hash('admin123', PASSWORD_DEFAULT), // password
+            password_hash('1', PASSWORD_DEFAULT), // password
             '(88) 88888-8888',       // phone
             'Administrator',         // profession
             1,                       // status: ATIVO

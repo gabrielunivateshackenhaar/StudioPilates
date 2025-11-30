@@ -169,6 +169,27 @@
 
     </div>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Verifica se a URL tem ?status=welcome
+            const urlParams = new URLSearchParams(window.location.search);
+            
+            if (urlParams.get('status') === 'welcome') {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Seja bem-vindo(a)!',
+                    text: 'Seu cadastro foi confirmado e você já está logado.',
+                    confirmButtonColor: '#28a745', // Verde
+                    confirmButtonText: 'Ótimo!'
+                }).then(() => {
+                    // Remove o parâmetro da URL para não mostrar o alerta de novo ao atualizar
+                    const newUrl = window.location.pathname;
+                    window.history.replaceState(null, '', newUrl);
+                });
+            }
+        });
+    </script>
+
     <?php require __DIR__ . '/partials/footer.php'; ?>
 
 </body>

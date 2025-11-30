@@ -162,9 +162,17 @@ class UserController {
             // SUCESSO: Ativa o usuário
             $this->user->activateUser($user['id']);
 
-            // Limpa a sessão e redireciona
+            // Limpa o email pendente
             unset($_SESSION['pending_email']);
-            header("Location: index.php?action=showLogin&status=activated");
+
+            // Login automático
+            $_SESSION['user_id'] = $user['id'];
+            $_SESSION['user_name'] = $user['name'];
+            $SESSION['user_category'] = $user['category'];
+
+            // Redireciona para Home com "sinal" boas-vindas
+            header("Location: index.php?status=welcome");
+            exit;
         } else {
             $errorMessage = "Código inválido. Tente novamente.";
             include __DIR__ . '/../view/confirm.php';
