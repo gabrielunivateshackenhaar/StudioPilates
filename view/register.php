@@ -25,6 +25,13 @@
                         <!-- TÍTULO -->
                         <h3 class="register-title">Cadastro de Usuário</h3>
 
+                        <?php if (!empty($errorMessage)): ?>
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <?= htmlspecialchars($errorMessage); ?>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        <?php endif; ?>
+
                         <!-- FORM -->
                         <?php
                             // Não passar $user nem $formAction para manter o comportamento padrão do registro

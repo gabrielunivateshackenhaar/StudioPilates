@@ -73,9 +73,16 @@ class UserController {
         $phone = $_POST['phone'];
         $profession = $_POST['profession'];
 
-        // Validações básicas
+        // Validações de senha
         if ($password !== $confirmPassword) {
             $errorMessage = "As senhas não coincidem!";
+            include __DIR__ . '/../view/register.php';
+            return;
+        }
+
+        // Validação de e-mail já existente
+        if ($this->user->findByEmail($email)) {
+            $errorMessage = "Este e-mail já está cadastrado. Tente fazer login.";
             include __DIR__ . '/../view/register.php';
             return;
         }
