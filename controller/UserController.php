@@ -38,7 +38,21 @@ class UserController {
         $loggedUser = $this->user->verifyLogin($email, $password);
 
         if ($loggedUser) {
-            session_start();
+            
+            // Verifica se o status é INATIVO
+            if ($loggedUser['status'] == UserStatus::INACTIVE->value) {
+
+                if (session_status() === PHP_SESSION_NONE) session_start();
+
+                // Salva e-mail na sessão
+                $_SESSION['pendig-email'] = $email;
+
+                // Redireciona para a tela de confirmação
+                header("Location: index.php?action=showConfirmForm");
+                exit;
+            }
+
+            if (session_status() === PHP_SESSION_NONE) session_start();
             $_SESSION['user_id'] = $loggedUser['id'];
             $_SESSION['user_name'] = $loggedUser['name'];
             $_SESSION['user_category'] = $loggedUser['category'];
@@ -184,6 +198,46 @@ class UserController {
             $errorMessage = "Código inválido. Tente novamente.";
             include __DIR__ . '/../view/confirm.php';
         }
+    }
+
+    // Reenviar código de confirmação
+    public function resendCode() {
+        if (session_status() === PHP_SESSION_NONE) session_start();
+        
+        $email = $_SESSION['pending_email'] ?? null;
+
+        if (!$email) {
+            header("Location: index.php?action=login");
+            exit;
+        }
+
+        // Gera novo código
+        $confirmationCode = (string)random_int(100000, 999999);
+
+        // Atualiza no banco
+        $this->user->updateCode($email, $confirmationCode);
+
+        // Busca o nome do usuário para o e-mail
+        $user = $this->user->findByEmail($email);
+        $name = $user['name'];
+
+        // Prepara e envia o e-mail
+        $emailService = new Email();
+        $subject = "Novo código de verificação - Studio Pilates";
+        
+        // Reutiliza o template de e-mail existente
+        ob_start();
+        require __DIR__ . '/../view/emails/confirmation.php'; // Usa $name e $confirmationCode
+        $message = ob_get_clean();
+        
+        if ($emailService->send($email, $name, $subject, $message)) {
+            // Sucesso: Redireciona com parâmetro para o alerta
+            header("Location: index.php?action=showConfirmForm&status=resent");
+        } else {
+            // Erro no envio
+            header("Location: index.php?action=showConfirmForm&error=email_fail");
+        }
+        exit;
     }
 
     // Logout

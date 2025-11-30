@@ -120,6 +120,12 @@ class User {
         ]);
     }
 
+    // Atualiza o código de confirmação, usado no reenvio
+    public function updateCode(string $email, string $newCode) {
+        $stmt = $this->pdo->prepare("UPDATE users SET confirmation_code = ? WHERE email = ?");
+        return $stmt->execute([$newCode, $email]);
+    }
+
     // Deletar usuário
     public function delete($id) {
         $stmt = $this->pdo->prepare("DELETE FROM users WHERE id = ?");

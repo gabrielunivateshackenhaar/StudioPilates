@@ -92,12 +92,19 @@ switch ($action) {
         $scheduleController->getSchedulesJson();
         break;
 
+    // Exibir formulário de confirmação
     case 'showConfirmForm':
         $userController->showConfirmForm();
         break;
 
+    // Validar o código de confirmação
     case 'confirmCode':
         $userController->confirmCode();
+        break;
+
+    // Reenviar código de confirmação
+    case 'resendCode':
+        $userController->resendCode();
         break;
 
     // Default: redireciona para home

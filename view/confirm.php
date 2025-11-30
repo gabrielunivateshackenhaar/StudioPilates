@@ -32,12 +32,52 @@
                                 <button type="submit" class="btn-login-submit w-100">Confirmar</button>
                             </form>
 
+                            <div class="mt-3">
+                                <small class="text-muted">Não recebeu?</small><br>
+                                <a href="index.php?action=resendCode" class="text-decoration-none" style="color: var(--verde-pilates); font-weight: 500; font-size: 0.9rem;">
+                                    Reenviar código
+                                </a>
+                            </div>
+
                             </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            
+            // Se o código foi reenviado com sucesso
+            if (urlParams.get('status') === 'resent') {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Código Enviado!',
+                    text: 'Verifique sua caixa de entrada (e spam).',
+                    confirmButtonColor: '#28a745',
+                    timer: 3000 // Fecha sozinho em 3s
+                }).then(() => {
+                    // Limpa a URL
+                    window.history.replaceState(null, '', window.location.pathname + '?action=showConfirmForm');
+                });
+            }
+
+            // Se houve erro no envio
+            if (urlParams.get('error') === 'email_fail') {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erro',
+                    text: 'Não foi possível enviar o e-mail. Tente mais tarde.',
+                    confirmButtonColor: '#d33'
+                });
+            }
+        });
+    </script>
+
+    <?php require __DIR__ . '/partials/footer.php'; ?>                                
+
     <?php require __DIR__ . '/partials/footer.php'; ?>
 </body>
 </html>
