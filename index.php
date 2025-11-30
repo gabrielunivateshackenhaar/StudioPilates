@@ -92,6 +92,14 @@ switch ($action) {
         $scheduleController->getSchedulesJson();
         break;
 
+    case 'showConfirmForm':
+        $userController->showConfirmForm();
+        break;
+
+    case 'confirmCode':
+        $userController->confirmCode();
+        break;
+
     // Default: redireciona para home
     default:
         $userController->home();

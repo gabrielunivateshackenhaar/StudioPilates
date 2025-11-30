@@ -18,6 +18,11 @@ enum Category: int {
     case ADMIN = 1;
 }
 
+enum UserStatus: int {
+    case INACTIVE = 0;
+    case ACTIVE = 1;
+}
+
 /*
  * Enum para horários criados
  */

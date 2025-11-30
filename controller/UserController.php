@@ -7,6 +7,7 @@ require_once __DIR__ . '/../model/User.php';
 require_once __DIR__ . '/../model/Enums.php';
 require_once __DIR__ . '/../model/Schedule.php';
 require_once __DIR__ . '/../model/Booking.php';
+require_once __DIR__ . '/../utils/Email.php';
 
 class UserController {
     private $user;
@@ -57,6 +58,11 @@ class UserController {
 
     // Processar registro
     public function register() {
+        // Garante que a sessão esteja iniciada para verificar admin e salvar email pendente
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
         $name = $_POST['name'];
         $email = $_POST['email'];
         $password = $_POST['password'];
@@ -67,28 +73,102 @@ class UserController {
         $phone = $_POST['phone'];
         $profession = $_POST['profession'];
 
-        // Validações
+        // Validações básicas
         if ($password !== $confirmPassword) {
             $errorMessage = "As senhas não coincidem!";
             include __DIR__ . '/../view/register.php';
             return;
         }
 
-        // Categoria definida pelo admin
+        // Verifica quem está cadastrando
+        $isAdminRegistering = (isset($_SESSION['user_id']) && $_SESSION['user_category'] == Category::ADMIN->value);
         $category = isset($_POST['category']) ? (int)$_POST['category'] : Category::NORMAL->value;
 
-        // Chama a model para criar o usuário
-        $this->user->create($name, $email, $password, $birthDate, $gender, $laterality, $phone, $profession, $category);
+        // Define Status e Código baseado em quem cadastra
+        if ($isAdminRegistering) {
+            // Admin criando usuário: Já nasce ATIVO e sem código
+            $status = UserStatus::ACTIVE->value; 
+            $confirmationCode = null; 
+        } else {
+            // Usuário se cadastrando: Nasce INATIVO e com código
+            $status = UserStatus::INACTIVE->value; 
+            $confirmationCode = (string)random_int(100000, 999999); 
+        }
 
-        // Decide para onde redirecionar
-        if (isset($_SESSION['user_id']) && $_SESSION['user_category'] == Category::ADMIN->value) {
-            // Admin cadastrando novo usuário
+        // Chama a model atualizada
+        $this->user->create(
+            $name, $email, $password, $birthDate, $gender, 
+            $laterality, $phone, $profession, 
+            $confirmationCode, 
+            $category, 
+            $status
+        );
+
+        // Pós-cadastro: Redirecionamento ou Envio de E-mail
+        if ($isAdminRegistering) {
             header("Location: index.php?action=admin");
         } else {
-            // Fluxo normal
-            header("Location: index.php?action=loginForm");
+            // --- ENVIO DE E-MAIL ---
+            $emailService = new Email();
+            $subject = "Confirme seu cadastro - Studio Pilates";
+
+            // Inicia o buffer para capturar o HTML da view
+            ob_start();
+            require __DIR__ . '/../view/emails/confirmation.php';
+            $message = ob_get_clean(); // Guarda o HTML na variável $message
+            
+            if ($emailService->send($email, $name, $subject, $message)) {
+                // Sucesso: Salva o e-mail na sessão para a próxima tela usar
+                $_SESSION['pending_email'] = $email;
+                // Redireciona para a tela de digitar o código
+                header("Location: index.php?action=showConfirmForm");
+            } else {
+                // Falha no envio (mas o usuário foi salvo no banco como inativo)
+                // Aqui poderíamos deletar o usuário ou pedir para tentar reenviar depois
+                $errorMessage = "Cadastro realizado, mas houve um erro ao enviar o e-mail de confirmação.";
+                include __DIR__ . '/../view/login.php'; 
+            }
         }
         exit;
+    }
+
+    // Exibe o formulário de código
+    public function showConfirmForm() {
+        if (session_status() === PHP_SESSION_NONE) session_start();
+        
+        if (!isset($_SESSION['pending_email'])) {
+            header("Location: index.php?action=login");
+            exit;
+        }
+        include __DIR__ . '/../view/confirm.php';
+    }
+
+    // Processa o código digitado
+    public function confirmCode() {
+        if (session_status() === PHP_SESSION_NONE) session_start();
+
+        $email = $_SESSION['pending_email'] ?? null;
+        $code  = $_POST['code'] ?? '';
+
+        if (!$email) {
+            header("Location: index.php?action=login");
+            exit;
+        }
+
+        // Busca o usuário pelo e-mail para checar o código
+        $user = $this->user->findByEmail($email);
+
+        if ($user && $user['confirmation_code'] === $code) {
+            // SUCESSO: Ativa o usuário
+            $this->user->activateUser($user['id']);
+
+            // Limpa a sessão e redireciona
+            unset($_SESSION['pending_email']);
+            header("Location: index.php?action=showLogin&status=activated");
+        } else {
+            $errorMessage = "Código inválido. Tente novamente.";
+            include __DIR__ . '/../view/confirm.php';
+        }
     }
 
     // Logout

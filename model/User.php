@@ -50,12 +50,14 @@ class User {
         ?Laterality $laterality,
         string $phone,
         string $profession,
-        int $category = Category::NORMAL->value // padrão NORMAL
+        ?string $confirmationCode,
+        int $category = Category::NORMAL->value, // padrão NORMAL
+        int $status = UserStatus::INACTIVE->value
     ) {
         $stmt = $this->pdo->prepare("
             INSERT INTO users
-            (name, email, password, birth_date, gender, laterality, phone, profession, category)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            (name, email, password, birth_date, gender, laterality, phone, profession, category, confirmation_code, status)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ");
 
         // Sempre hash a senha
@@ -70,7 +72,9 @@ class User {
             $laterality?->value,
             $phone,
             $profession,
-            $category
+            $category,
+            $confirmationCode,
+            $status
         ]);
     }
 
@@ -101,7 +105,22 @@ class User {
         return $stmt->execute($fields);
     }
 
-    // // Deletar usuário
+    // Ativa a conta do usuário após a confirmação pelo e-mail
+    public function activateUser(int $id) {
+        $stmt = $this->pdo->prepare("
+        UPDATE users
+        SET status = ?, 
+        confirmation_code = NULL
+        WHERE id = ?
+        ");
+
+        return $stmt->execute([
+            UserStatus::ACTIVE->value,
+            $id
+        ]);
+    }
+
+    // Deletar usuário
     public function delete($id) {
         $stmt = $this->pdo->prepare("DELETE FROM users WHERE id = ?");
         return $stmt->execute([$id]);
