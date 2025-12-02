@@ -99,25 +99,6 @@ $isAdminRegister = $isAdminRegister ?? false;   // padrão: false
       <div class="invalid-feedback">Digite um telefone válido no formato (99) 99999-9999.</div>
     </div>
 
-    <!-- Profissão (opcional) -->
-    <div class="col-12 col-md-6">
-      <label for="profession" class="form-label">Profissão (opcional)</label>
-      <input type="text" class="form-control optional" id="profession" name="profession"
-        placeholder="Sua profissão"
-        value="<?= htmlspecialchars($user['profession'] ?? '') ?>">
-    </div>
-
-    <!-- Lateralidade (opcional) -->
-    <div class="col-12 col-md-6">
-      <label for="laterality" class="form-label">Lateralidade (opcional)</label>
-      <select class="form-select optional" id="laterality" name="laterality">
-        <option value="" <?= empty($user['laterality']) ? 'selected disabled' : 'disabled' ?>>Selecione</option>
-        <option value="0" <?= isset($user['laterality']) && $user['laterality'] == 0 ? 'selected' : '' ?>>Destro</option>
-        <option value="1" <?= isset($user['laterality']) && $user['laterality'] == 1 ? 'selected' : '' ?>>Canhoto</option>
-        <option value="2" <?= isset($user['laterality']) && $user['laterality'] == 2 ? 'selected' : '' ?>>Ambidestro</option>
-      </select>
-    </div>
-
     <!-- Categoria (somente admin) -->
     <?php if ($isAdminRegister): ?>
     <div class="col-12 col-md-6">

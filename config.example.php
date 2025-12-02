@@ -5,6 +5,9 @@
 // username = endereço de e-mail
 // password = senha de app gerada
 
+// Extension missing: openssl
+// É preciso descomentar a propriedade "extension=openssl" no php.ini para evitar esse erro
+
 return [
     'email' => [
         'host'     => 'smtp.gmail.com',

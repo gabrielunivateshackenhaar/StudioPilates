@@ -21,11 +21,9 @@
                             <th>Nome</th>
                             <th>E-mail</th>
                             <th>Telefone</th>
-                            <th>Profissão</th>
                             <th>Data de Nascimento</th>
                             <th>Categoria</th>
                             <th>Gênero</th>
-                            <th>Lateralidade</th>
                             <th class="text-center">Ações</th>
                         </tr>
                     </thead>
@@ -35,7 +33,6 @@
                                 <td><?= htmlspecialchars($u['name']) ?></td>
                                 <td><?= htmlspecialchars($u['email']) ?></td>
                                 <td><?= htmlspecialchars($u['phone'] ?? '-') ?></td>
-                                <td><?= htmlspecialchars($u['profession'] ?? '-') ?></td>
                                 <td>
                                     <?= isset($u['birth_date'])
                                         ? (new DateTime($u['birth_date']))->format('d/m/Y')
@@ -52,14 +49,6 @@
                                     <?= match ($u['gender']) {
                                         Gender::MALE->value => 'Masculino',
                                         Gender::FEMALE->value => 'Feminino',
-                                        default => '-'
-                                    } ?>
-                                </td>
-                                <td>
-                                    <?= match ($u['laterality']) {
-                                        Laterality::RIGHT->value => 'Destro',
-                                        Laterality::LEFT->value => 'Canhoto',
-                                        Laterality::AMBIDEXTROUS->value => 'Ambidestro',
                                         default => '-'
                                     } ?>
                                 </td>

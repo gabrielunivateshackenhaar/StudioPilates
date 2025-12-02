@@ -83,9 +83,7 @@ class UserController {
         $confirmPassword = $_POST['confirmPassword'];
         $birthDate = $_POST['birth_date'];
         $gender = Gender::from($_POST['gender']);
-        $laterality = isset($_POST['laterality']) ? Laterality::from($_POST['laterality']) : null;
         $phone = $_POST['phone'];
-        $profession = $_POST['profession'];
 
         // Validações de senha
         if ($password !== $confirmPassword) {
@@ -119,7 +117,7 @@ class UserController {
         // Chama a model atualizada
         $this->user->create(
             $name, $email, $password, $birthDate, $gender, 
-            $laterality, $phone, $profession, 
+            $phone,
             $confirmationCode, 
             $category, 
             $status
@@ -302,8 +300,6 @@ class UserController {
             'birth_date' => $_POST['birth_date'] ?? '',
             'gender'     => $_POST['gender'] ?? '',
             'phone'      => $_POST['phone'] ?? '',
-            'profession' => $_POST['profession'] ?? '',
-            'laterality' => $_POST['laterality'] ?? '',
         ];
 
         $this->user->update($id, $data);
@@ -388,8 +384,6 @@ class UserController {
             'birth_date' => $_POST['birth_date'] ?? '',
             'gender'     => $_POST['gender'] ?? '',
             'phone'      => $_POST['phone'] ?? '',
-            'profession' => $_POST['profession'] ?? '',
-            'laterality' => $_POST['laterality'] ?? '',
         ];
 
         // Atualiza no banco

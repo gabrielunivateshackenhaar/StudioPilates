@@ -17,12 +17,10 @@ try {
             category INTEGER,
             email TEXT,
             gender INTEGER,
-            laterality INTEGER,
             name TEXT,
             password TEXT,
             phone TEXT,
-            profession TEXT,
-            status INTEGER DEFAULT 0, -- 0: Pendente, 1: Ativo
+            status INTEGER DEFAULT 0,
             confirmation_code TEXT
         )
     ");
@@ -34,8 +32,8 @@ try {
         
         $stmt = $pdo->prepare("
             INSERT INTO users 
-            (birth_date, category, email, gender, laterality, name, password, phone, profession, status, confirmation_code) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            (birth_date, category, email, gender, name, password, phone, status, confirmation_code) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         ");
 
         // Usuário normal (Já nasce ATIVO = 1 para testes)
@@ -44,11 +42,9 @@ try {
             Category::NORMAL->value,  // category
             'user1@test.com',         // email
             Gender::MALE->value,      // gender
-            Laterality::RIGHT->value, // laterality
             'User One',               // name
             password_hash('1', PASSWORD_DEFAULT), // password
             '(99) 99999-9999',        // phone
-            'Student',                // profession
             1,                        // status: ATIVO
             null                      // code
         ]);
@@ -59,11 +55,9 @@ try {
             Category::ADMIN->value, // category
             'admin1@test.com',      // email
             Gender::FEMALE->value,  // gender
-            Laterality::LEFT->value, // laterality
             'Admin One',             // name
             password_hash('1', PASSWORD_DEFAULT), // password
             '(88) 88888-8888',       // phone
-            'Administrator',         // profession
             1,                       // status: ATIVO
             null                     // code
         ]);

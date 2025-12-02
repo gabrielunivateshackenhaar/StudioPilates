@@ -47,17 +47,15 @@ class User {
         string $password,
         string $birthDate,
         Gender $gender,
-        ?Laterality $laterality,
         string $phone,
-        string $profession,
         ?string $confirmationCode,
         int $category = Category::NORMAL->value, // padrão NORMAL
         int $status = UserStatus::INACTIVE->value
     ) {
         $stmt = $this->pdo->prepare("
             INSERT INTO users
-            (name, email, password, birth_date, gender, laterality, phone, profession, category, confirmation_code, status)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            (name, email, password, birth_date, gender, phone, category, confirmation_code, status)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         ");
 
         // Sempre hash a senha
@@ -69,9 +67,7 @@ class User {
             $hashedPassword,
             $birthDate,
             $gender->value,
-            $laterality?->value,
             $phone,
-            $profession,
             $category,
             $confirmationCode,
             $status
@@ -85,8 +81,6 @@ class User {
             'birth_date' => $data['birth_date'],
             'gender'     => $data['gender'],
             'phone'      => $data['phone'],
-            'profession' => $data['profession'],
-            'laterality' => $data['laterality'],
         ];
 
         // Se senha foi preenchida, atualiza também
