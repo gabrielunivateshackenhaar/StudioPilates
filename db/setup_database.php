@@ -94,7 +94,32 @@ try {
         )
     ");
 
-    echo "Banco de dados configurado com sucesso (Tabelas Users, Schedules e Bookings)!";
+    // ===================================================================================
+    // 4. TABELA ASSESSMENTS (Avaliações)
+    // ===================================================================================
+    $pdo->exec("
+        CREATE TABLE IF NOT EXISTS assessments (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            
+            -- Dados Gerais / Anamnese
+            profession TEXT,
+            laterality INTEGER, -- 0: Destro, 1: Canhoto, 2: Ambidestro
+            height REAL,        -- Altura (em metros)
+            weight REAL,        -- Peso (em kg)
+            diagnosis TEXT,     -- Diagnóstico Clínico
+            complaint TEXT,     -- Queixa Principal / Objetivos
+            
+            -- Dados da Avaliação Postural (JSON)
+            -- Armazena todas as marcações de vista anterior, posterior e lateral
+            postural_data TEXT, 
+            
+            FOREIGN KEY (user_id) REFERENCES users(id)
+        )
+    ");
+
+    echo "Banco de dados configurado com sucesso!";
 
 } catch (PDOException $e) {
     die("Erro ao configurar o banco de dados: " . $e->getMessage());
