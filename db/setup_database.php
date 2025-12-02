@@ -21,7 +21,9 @@ try {
             password TEXT,
             phone TEXT,
             status INTEGER DEFAULT 0,
-            confirmation_code TEXT
+            confirmation_code TEXT,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            last_login DATETIME DEFAULT NULL          
         )
     ");
 

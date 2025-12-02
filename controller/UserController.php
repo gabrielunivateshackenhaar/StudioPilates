@@ -53,6 +53,10 @@ class UserController {
             }
 
             if (session_status() === PHP_SESSION_NONE) session_start();
+
+            // --- ATUALIZA O ÚLTIMO LOGIN ---
+            $this->user->updateLastLogin($loggedUser['id']);
+
             $_SESSION['user_id'] = $loggedUser['id'];
             $_SESSION['user_name'] = $loggedUser['name'];
             $_SESSION['user_category'] = $loggedUser['category'];
@@ -183,6 +187,9 @@ class UserController {
 
             // Limpa o email pendente
             unset($_SESSION['pending_email']);
+
+            // --- ATUALIZA O ÚLTIMO LOGIN ---
+            $this->user->updateLastLogin($user['id']);
 
             // Login automático
             $_SESSION['user_id'] = $user['id'];

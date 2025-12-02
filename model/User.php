@@ -120,6 +120,13 @@ class User {
         return $stmt->execute([$newCode, $email]);
     }
 
+    // Atualiza a data do último login
+    public function updateLastLogin(int $id) {
+        // datetime('now', 'localtime') pega a hora atual do servidor
+        $stmt = $this->pdo->prepare("UPDATE users SET last_login = datetime('now', 'localtime') WHERE id = ?");
+        return $stmt->execute([$id]);
+    }
+
     // Deletar usuário
     public function delete($id) {
         $stmt = $this->pdo->prepare("DELETE FROM users WHERE id = ?");
