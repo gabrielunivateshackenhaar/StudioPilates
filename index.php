@@ -92,6 +92,11 @@ switch ($action) {
         $scheduleController->getSchedulesJson();
         break;
 
+    // Processar agendamento (chamado via AJAX pelo calendar.js)
+    case 'saveBooking':
+        $bookingController->saveBooking();
+        break;
+
     // Exibir formulário de confirmação
     case 'showConfirmForm':
         $userController->showConfirmForm();

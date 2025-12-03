@@ -40,17 +40,3 @@ class BookingController {
         }
     }
 }
-//sinceramente não entendi porque isso é necessário para funcionar
-require_once __DIR__ . '/../db/db.php'; // IMPORTANTE
-
-$controller = new BookingController($pdo);
-
-$action = $_GET['action'] ?? '';
-
-if ($action === "saveBooking") {
-    $controller->saveBooking();
-    exit;
-}
-
-echo json_encode(["status" => "erro", "msg" => "Ação inválida"]);
-exit;

@@ -158,7 +158,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     const formData = new FormData();
                     formData.append("schedule_id", info.event.id);
 
-                    fetch("controller/BookingController.php?action=saveBooking", {
+                    fetch("index.php?action=saveBooking", {
                         method: "POST",
                         body: formData
                     })
