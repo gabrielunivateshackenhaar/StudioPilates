@@ -116,6 +116,16 @@ switch ($action) {
     case 'saveAnamnesis':
         $assessmentController->saveAnamnesis();
         break;
+    
+    // Admin: Abrir Avaliação
+    case 'adminAssessment':
+        $assessmentController->adminAssessment();
+        break;
+
+    // Admin: Salvar Avaliação
+    case 'saveAdminAssessment':
+        $assessmentController->saveAdminAssessment();
+        break;
 
     // Default: redireciona para home
     default:

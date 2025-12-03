@@ -99,50 +99,11 @@
                                     <p class="text-muted mb-4">Preencha os dados abaixo para auxiliar no seu atendimento.</p>
                                     
                                     <form action="index.php?action=saveAnamnesis" method="post">
-                                        <div class="row g-3">
-                                            <div class="col-md-6">
-                                                <label class="form-label">Profissão</label>
-                                                <input type="text" class="form-control" name="profession" 
-                                                    value="<?= htmlspecialchars($assessment['profession'] ?? '') ?>">
-                                            </div>
+                                        
+                                        <?php require __DIR__ . '/partials/anamnesis_form.php'; ?>
 
-                                            <div class="col-md-6">
-                                                <label class="form-label">Lateralidade</label>
-                                                <select class="form-select" name="laterality">
-                                                    <option value="" selected disabled>Selecione</option>
-                                                    <option value="0" <?= (isset($assessment['laterality']) && $assessment['laterality'] == 0) ? 'selected' : '' ?>>Destro</option>
-                                                    <option value="1" <?= (isset($assessment['laterality']) && $assessment['laterality'] == 1) ? 'selected' : '' ?>>Canhoto</option>
-                                                    <option value="2" <?= (isset($assessment['laterality']) && $assessment['laterality'] == 2) ? 'selected' : '' ?>>Ambidestro</option>
-                                                </select>
-                                            </div>
-
-                                            <div class="col-md-6">
-                                                <label class="form-label">Altura (m)</label>
-                                                <input type="text" class="form-control" name="height" placeholder="Ex: 1.70"
-                                                    value="<?= htmlspecialchars($assessment['height'] ?? '') ?>">
-                                            </div>
-
-                                            <div class="col-md-6">
-                                                <label class="form-label">Peso (kg)</label>
-                                                <input type="text" class="form-control" name="weight" placeholder="Ex: 65.5"
-                                                    value="<?= htmlspecialchars($assessment['weight'] ?? '') ?>">
-                                            </div>
-
-                                            <div class="col-12">
-                                                <label class="form-label">Diagnóstico Clínico</label>
-                                                <textarea class="form-control" name="diagnosis" rows="2" 
-                                                    placeholder="Possui algum diagnóstico médico? (Ex: Hérnia, Escoliose...)"><?= htmlspecialchars($assessment['diagnosis'] ?? '') ?></textarea>
-                                            </div>
-
-                                            <div class="col-12">
-                                                <label class="form-label">Queixa Principal / Objetivos</label>
-                                                <textarea class="form-control" name="complaint" rows="3" 
-                                                    placeholder="O que te trouxe ao Pilates? Onde sente dor?"><?= htmlspecialchars($assessment['complaint'] ?? '') ?></textarea>
-                                            </div>
-
-                                            <div class="col-12 mt-4">
-                                                <button type="submit" class="btn-register-submit w-100">Salvar Ficha</button>
-                                            </div>
+                                        <div class="col-12 mt-4">
+                                            <button type="submit" class="btn-register-submit w-100">Salvar Ficha</button>
                                         </div>
                                     </form>
                                 </div>

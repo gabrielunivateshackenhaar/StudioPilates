@@ -53,6 +53,10 @@
                                     } ?>
                                 </td>
                                 <td class="text-center">
+                                    <a href="index.php?action=adminAssessment&userId=<?= $u['id'] ?>" 
+                                        class="text-secondary" title="Avaliação Postural">
+                                        <i class="bi bi-clipboard-pulse me-2"></i></a>
+                                    
                                     <a href="index.php?action=editUser&id=<?= $u['id'] ?>"
                                         class="text-secondary" title="Editar">
                                         <i class="bi bi-pencil me-2"></i></a>
