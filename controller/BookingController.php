@@ -14,7 +14,10 @@ class BookingController {
     }
 
     public function saveBooking() {
-        session_start();
+        // Verifica se a sessão já existe antes de iniciar
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
 
         if (!isset($_SESSION["user_id"])) {
             echo json_encode(["status" => "erro", "msg" => "Usuário não logado"]);
