@@ -5,6 +5,26 @@
     $user_id = $_SESSION['user_id'] ?? null;
     ?>
     <script>const SESSION_USER_ID = <?= json_encode($user_id) ?>;</script>
+
+    <?php 
+    // A variável $hasAssessment vem do UserController::home()
+    if (isset($_SESSION['user_id']) && isset($hasAssessment) && !$hasAssessment && $_SESSION['user_category'] != 1): 
+    ?>
+        <div class="fade-in-down mb-4">
+            <div class="alert alert-warning border-0 shadow-sm d-flex align-items-center" role="alert" style="background-color: #fff3cd; color: #856404; border-left: 5px solid #ffc107 !important;">
+                <i class="bi bi-clipboard-pulse fs-3 me-3"></i>
+                <div class="flex-grow-1">
+                    <strong>Complete seu perfil!</strong> 
+                    <span class="d-none d-md-inline">Para um acompanhamento personalizado,</span> 
+                    preencha sua Ficha de Saúde.
+                </div>
+                <a href="index.php?action=profile&tab=health" class="btn btn-sm btn-warning text-dark fw-bold ms-3">
+                    Preencher
+                </a>
+            </div>
+        </div>
+    <?php endif; ?>
+
     <div class="card shadow-sm mb-3">
         <div class="card-body d-flex flex-wrap align-items-center justify-content-center gap-3">
 

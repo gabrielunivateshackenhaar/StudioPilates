@@ -25,6 +25,19 @@ class UserController {
 
     // Tela inicial (home)
     public function home() {
+        // Inicia sessão se necessário para verificar login
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        $hasAssessment = false;
+
+        // Se o usuário estiver logado, verifica se tem ficha
+        if (isset($_SESSION['user_id'])) {
+            $assessment = $this->assessmentModel->getByUserId($_SESSION['user_id']);
+            $hasAssessment = !empty($assessment);
+        }
+
         include __DIR__ . '/../view/home.php';
     }
 
