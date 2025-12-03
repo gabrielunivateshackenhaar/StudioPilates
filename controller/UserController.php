@@ -8,16 +8,19 @@ require_once __DIR__ . '/../model/Enums.php';
 require_once __DIR__ . '/../model/Schedule.php';
 require_once __DIR__ . '/../model/Booking.php';
 require_once __DIR__ . '/../utils/Email.php';
+require_once __DIR__ . '/../model/Assessment.php';
 
 class UserController {
     private $user;
     private $scheduleModel;
     private $bookingModel;
+    private $assessmentModel;
 
     public function __construct($pdo) {
         $this->user = new User($pdo);
         $this->scheduleModel = new Schedule($pdo);
         $this->bookingModel = new Booking($pdo);
+        $this->assessmentModel = new Assessment($pdo);
     }
 
     // Tela inicial (home)
@@ -341,7 +344,10 @@ class UserController {
             exit;
         }
 
-        // 2. Busca agendamentos
+        // 2. Busca a Ficha de Avaliação
+        $assessment = $this->assessmentModel->getByUserId($id);
+
+        // 3. Busca agendamentos
         $allBookings = $this->bookingModel->getByUserId($id);
 
         // 3. Separa em Futuros e Passados

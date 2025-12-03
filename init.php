@@ -6,7 +6,9 @@ require_once __DIR__ . '/db/db.php';
 require_once __DIR__ . '/controller/UserController.php';
 require_once __DIR__ . '/controller/ScheduleController.php';
 require_once __DIR__ . '/controller/BookingController.php';
+require_once __DIR__ . '/controller/AssessmentController.php';
 
 $userController = new UserController($pdo);
 $scheduleController = new ScheduleController($pdo);
 $bookingController = new BookingController($pdo);
+$assessmentController = new AssessmentController($pdo);

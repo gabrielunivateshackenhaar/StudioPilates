@@ -112,6 +112,11 @@ switch ($action) {
         $userController->resendCode();
         break;
 
+    // Salvar ficha de Saúde
+    case 'saveAnamnesis':
+        $assessmentController->saveAnamnesis();
+        break;
+
     // Default: redireciona para home
     default:
         $userController->home();
