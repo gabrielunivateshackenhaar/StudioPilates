@@ -210,7 +210,7 @@ class UserController {
             // Login automático
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['user_name'] = $user['name'];
-            $SESSION['user_category'] = $user['category'];
+            $_SESSION['user_category'] = $user['category'];
 
             // Redireciona para Home com "sinal" boas-vindas
             header("Location: index.php?status=welcome");

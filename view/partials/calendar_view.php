@@ -8,7 +8,7 @@
 
     <?php 
     // A variável $hasAssessment vem do UserController::home()
-    if (isset($_SESSION['user_id']) && isset($hasAssessment) && !$hasAssessment && $_SESSION['user_category'] != 1): 
+    if (isset($_SESSION['user_id']) && isset($hasAssessment) && !$hasAssessment && ($_SESSION['user_category'] ?? 0) != 1):
     ?>
         <div class="fade-in-down mb-4">
             <div class="alert alert-warning border-0 shadow-sm d-flex align-items-center" role="alert" style="background-color: #fff3cd; color: #856404; border-left: 5px solid #ffc107 !important;">
