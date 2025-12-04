@@ -48,5 +48,32 @@
     <!-- FOOTER -->
     <?php require __DIR__ . '/partials/footer.php'; ?>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Seleciona o formulário dentro do container (já que o form vem de um partial)
+            const form = document.querySelector('.register-card form');
+            
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    // Se o formulário for válido (campos preenchidos)
+                    if (form.checkValidity()) {
+                        // Mostra o loading
+                        Swal.fire({
+                            title: 'Criando sua conta...',
+                            text: 'Estamos salvando seus dados e enviando o código de confirmação. Aguarde.',
+                            allowOutsideClick: false,
+                            allowEscapeKey: false,
+                            didOpen: () => {
+                                Swal.showLoading();
+                            }
+                        });
+                        // O formulário continua o envio normalmente aqui, 
+                        // mas o usuário vê o loading enquanto o PHP processa o e-mail.
+                    }
+                });
+            }
+        });
+    </script>
+
 </body>
 </html>
