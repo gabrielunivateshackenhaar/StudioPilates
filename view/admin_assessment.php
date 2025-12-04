@@ -30,21 +30,378 @@
 
                 <div class="tab-content p-4 border border-top-0 bg-white rounded-bottom shadow-sm">
                     
-                    // Dados Gerais
                     <div class="tab-pane fade show active" id="anamnese" role="tabpanel">
                         <?php require __DIR__ . '/partials/anamnesis_form.php'; ?>
                     </div>
 
+                    <?php
+                        function renderRadioGroup($title, $name, $options, $selected) {
+                            echo "<h5 class='mb-3 text-success border-bottom pb-2 mt-4'>{$title}</h5>";
+                            echo "<div class='mb-3'>";
+
+                            foreach ($options as $value => $label) {
+                                $checked = ($selected === $value) ? 'checked' : '';
+                                echo "
+                                    <div class='form-check form-check-inline'>
+                                        <input class='form-check-input' type='radio' name='{$name}' value='{$value}' {$checked}>
+                                        <label class='form-check-label'>{$label}</label>
+                                    </div>
+                                ";
+                            }
+
+                            echo "</div>";
+                        }
+                    ?>
+
                     <div class="tab-pane fade" id="anterior">
-                        <p>Implementar campos da Vista Posterior...</p>
+
+                        <?php 
+                            $ant = $postural['anterior'] ?? []; 
+
+                            renderRadioGroup(
+                                "Cabeça",
+                                "postural[anterior][cabeca]",
+                                [
+                                    "alinhada"     => "Alinhada",
+                                    "inclinada_d"  => "Inclinada à D",
+                                    "inclinada_e"  => "Inclinada à E",
+                                    "rodada_d"     => "Rodada à D",
+                                    "rodada_e"     => "Rodada à E",
+                                ],
+                                $ant['cabeca'] ?? null
+                            );
+
+                            renderRadioGroup(
+                                "Altura dos Ombroms",
+                                "postural[anterior][ombros]",
+                                [
+                                    "simetricos" => "Simétricos",
+                                    "direito_alto" => "Direito + alto",
+                                    "esquerdo_alto" => "Esquerdo + alto",
+                                ],
+                                $ant['ombros'] ?? null
+                            );
+
+                            renderRadioGroup(
+                                "Altura das Mãos",
+                                "postural[anterior][maos]",
+                                [
+                                    "simetricos" => "Simétricos",
+                                    "direito_alto" => "Direito + alto",
+                                    "esquerdo_alto" => "Esquerdo + alto",
+                                ],
+                                $ant['maos'] ?? null
+                            );
+
+                            renderRadioGroup(
+                                "Rotação do Tronco",
+                                "postural[anterior][tronco]",
+                                [
+                                    "a_esquerda" => "À esquerda",
+                                    "a_direita" => "À direita",
+                                    "ausente" => "Ausente",
+                                ],
+                                $ant['tronco'] ?? null
+                            );
+
+                            renderRadioGroup(
+                                "Ângulo de Tales",
+                                "postural[anterior][tales]",
+                                [
+                                    "simetrico" => "Simétrico",
+                                    "maior_direita" => "Maior à direita",
+                                    "maior_esquerda" => "Maior à esquerda",
+                                ],
+                                $ant['tales'] ?? null
+                            );
+
+                            renderRadioGroup(
+                                "Cicatriz Umbilical",
+                                "postural[anterior][umbilical]",
+                                [
+                                    "alinhada" => "Alinhada",
+                                    "desvio_direita" => "Desvio à direita",
+                                    "desvio_esquerda" => "Desvio à esquerda",
+                                ],
+                                $ant['umbilical'] ?? null
+                            );
+
+                            renderRadioGroup(
+                                "Altura das C. Ilíacas",
+                                "postural[anterior][iliacas]",
+                                [
+                                    "simetricos" => "Simétricos",
+                                    "direito_alto" => "Direito + alto",
+                                    "esquerdo_alto" => "Esquerdo + alto",
+                                ],
+                                $ant['iliacas'] ?? null
+                            );
+
+                            renderRadioGroup(
+                                "Joelhos",
+                                "postural[anterior][joelhos]",
+                                [
+                                    "valgo" => "Valgo",
+                                    "varo" => "Varo",
+                                    "normal" => "Normal",
+                                ],
+                                $ant['joelhos'] ?? null
+                            );
+
+                            renderRadioGroup(
+                                "Tornozelos",
+                                "postural[anterior][tornozelos]",
+                                [
+                                    "valgo" => "Valgo",
+                                    "varo" => "Varo",
+                                    "normal" => "Normal",
+                                ],
+                                $ant['tornozelos'] ?? null
+                            );
+
+                            renderRadioGroup(
+                                "Pés",
+                                "postural[anterior][pes]",
+                                [
+                                    "planos" => "Planos",
+                                    "cavos" => "Cavos",
+                                    "normal" => "Normal",
+                                ],
+                                $ant['pes'] ?? null
+                            );
+                        ?>
+
                     </div>
 
                     <div class="tab-pane fade" id="posterior">
-                         <p>Implementar campos da Vista Posterior...</p>
+
+                    <?php 
+
+                        $post = $postural['posterior'] ?? [];
+
+                        renderRadioGroup(
+                            "Altura das Escápulas",
+                            "postural[posterior][altura_escapulas]",
+                            [
+                                "simetricos" => "Simetricos",
+                                "direito_alto" => "Direito + alto",
+                                "esquerdo_alto" => "Esquerdo + alto",
+                            ],
+                            $post['altura_escapulas'] ?? null
+                        );
+
+                        renderRadioGroup(
+                            "Escápula Alada",
+                            "postural[posterior][escapula_alada]",
+                            [
+                                "a_direita" => "À direita",
+                                "a_esquerda" => "À esquerda",
+                                "ausente" => "Ausente",
+                            ],
+                            $post['escapula_alada'] ?? null
+                        );
+
+                        renderRadioGroup(
+                            "Gibosidade Torácica",
+                            "postural[posterior][gibosidade]",
+                            [
+                                "a_direita" => "À direita",
+                                "a_esquerda" => "À esquerda",
+                                "ausente" => "Ausente",
+                                "bilateral_direita" => "Bilateral > à direita",
+                                "bilateral_esquerda" => "Bilateral > à esquerda",
+                            ],
+                            $post['gibosidade'] ?? null
+                        );
+
+                        renderRadioGroup(
+                            "Pregas Glúteas",
+                            "postural[posterior][pregas_gluteas]",
+                            [
+                                "simetricos" => "Simétricos",
+                                "direito_alto" => "Direito + alto",
+                                "esquerdo_alto" => "Esquerdo + alto",
+                                "profunda_direita" => "+ profunda à direita",
+                                "profunda_esquerda" => "+ profunda à esquerda",
+                            ],
+                            $post['pregas_gluteas'] ?? null
+                        );
+
+                        renderRadioGroup(
+                            "Pregas Poplíteas",
+                            "postural[posterior][pregas_popliteas]",
+                            [
+                                "simetricos" => "Simétricos",
+                                "direito_alto" => "Direito + alto",
+                                "esquerdo_alto" => "Esquerdo + alto",
+                                "profunda_direita" => "+ profunda à direita",
+                                "profunda_esquerda" => "+ profunda à esquerda",
+                            ],
+                            $post['pregas_popliteas'] ?? null
+                        );
+
+                        renderRadioGroup(
+                            "Coluna Lombar com Concavidade",
+                            "postural[posterior][lombar_concavidade]",
+                            [
+                                "a_direita" => "À direita",
+                                "a_esquerda" => "À esquerda",
+                                "ausente" => "Ausente",
+                            ],
+                            $post['lombar_concavidade'] ?? null
+                        );
+
+                        renderRadioGroup(
+                            "Coluna Torácia com Concavidade",
+                            "postural[posterior][toracica_concavidade]",
+                            [
+                                "a_direita" => "À direita",
+                                "a_esquerda" => "À esquerda",
+                                "ausente" => "Ausente",
+                            ],
+                            $post['toracica_concavidade'] ?? null
+                        );
+
+                        renderRadioGroup(
+                            "Coluna Cervical com Concavidade",
+                            "postural[posterior][cervical_concavidade]",
+                            [
+                                "a_direita" => "À direita",
+                                "a_esquerda" => "À esquerda",
+                                "ausente" => "Ausente",
+                            ],
+                            $post['cervical_concavidade'] ?? null
+                        );
+                    ?>
+
                     </div>
 
                     <div class="tab-pane fade" id="lateral">
-                         <p>Implementar campos da Vista Lateral...</p>
+                         
+                        <?php
+
+                            $lat = $postural['lateral_direita'] ?? [];
+
+                            renderRadioGroup(
+                                "Cabeça",
+                                "postural[lateral_direita][cabeca]",
+                                [
+                                    "anteriorizada" => "Anteriorizada",
+                                    "posteriorizada" => "Posteriorizada",
+                                    "normal" => "Normal",
+                                ],
+                                $lat['cabeca'] ?? null
+                            );
+
+                            renderRadioGroup(
+                                "Coluna Cervical",
+                                "postural[lateral_direita][coluna_cervical]",
+                                [
+                                    "hiperlordose" => "Hiperlordose",
+                                    "retificada" => "Retificada",
+                                    "normal" => "Normal",
+                                ],
+                                $lat['coluna_cervical'] ?? null
+                            );
+
+                            renderRadioGroup(
+                                "Ombro",
+                                "postural[lateral_direita][ombro]",
+                                [
+                                    "protusos" => "Protusos",
+                                    "retraidos" => "Retraídos",
+                                    "normal" => "Normal",
+                                ],
+                                $lat['ombro'] ?? null
+                            );
+
+                            renderRadioGroup(
+                                "Membro Superior Dir.",
+                                "postural[lateral_direita][membro_sup_dir]",
+                                [
+                                    "anteriorizado" => "Anteriorizado",
+                                    "posteriorizado" => "Posteriorizado",
+                                    "normal" => "Normal",
+                                ],
+                                $lat['membro_sup_dir'] ?? null
+                            );
+
+                            renderRadioGroup(
+                                "Coluna torácia",
+                                "postural[lateral_direita][coluna_toracica]",
+                                [
+                                    "curvo" => "Curvo",
+                                    "plano" => "Plano",
+                                    "normal" => "Normal",
+                                ],
+                                $lat['coluna_toracica'] ?? null
+                            );
+
+                            renderRadioGroup(
+                                "Rotação de Tronco",
+                                "postural[lateral_direita][rotacao_tronco]",
+                                [
+                                    "direita" => "Direita",
+                                    "esquerda" => "Esquerda",
+                                    "normal" => "Normal",
+                                ],
+                                $lat['rotacao_tronco'] ?? null
+                            );
+
+                            renderRadioGroup(
+                                "Abdomen",
+                                "postural[lateral_direita][abdomen]",
+                                [
+                                    "protuso" => "Protuso",
+                                    "ptose" => "Ptose",
+                                ],
+                                $lat['abdomen'] ?? null
+                            );
+
+                            renderRadioGroup(
+                                "Coluna Lombar",
+                                "postural[lateral_direita][coluna_lombar]",
+                                [
+                                    "hiperlordose" => "Hiperlordose",
+                                    "retificada" => "Retificada",
+                                    "normal" => "Normal",
+                                ],
+                                $lat['coluna_lombar'] ?? null
+                            );
+
+                            renderRadioGroup(
+                                "Pelve",
+                                "postural[lateral_direita][pelve]",
+                                [
+                                    "antevertida" => "Antevertida",
+                                    "retrovertida" => "Retrovertida",
+                                    "normal" => "Normal",
+                                ],
+                                $lat['pelve'] ?? null
+                            );
+
+                            renderRadioGroup(
+                                "Quadril",
+                                "postural[lateral_direita][quadril]",
+                                [
+                                    "fletido" => "Fletido",
+                                    "normal" => "Normal",
+                                ],
+                                $lat['quadril'] ?? null
+                            );
+
+                            renderRadioGroup(
+                                "Joelho",
+                                "postural[lateral_direita][joelho]",
+                                [
+                                    "fletido" => "Fletido",
+                                    "normal" => "Normal",
+                                ],
+                                $lat['joelho'] ?? null
+                            );
+
+                        ?>
+
                     </div>
 
                 </div>
