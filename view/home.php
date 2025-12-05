@@ -165,7 +165,9 @@
         </div>
 
         <!-- CALENDÁRIO -->
-        <?php require __DIR__ . '/partials/calendar_view.php'; ?>
+        <div id="contentScheduling" class="container my-5" style="display:none;">
+            <?php require __DIR__ . '/partials/calendar_view.php'; ?>
+        </div>
 
     </div>
 

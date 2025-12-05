@@ -4,11 +4,12 @@ document.addEventListener('DOMContentLoaded', function () {
     // Referências aos elementos HTML
     var calendarEl = document.getElementById('calendar');
     var scheduleButton = document.getElementById('btnScheduling'); // Botão "Agendamento"
+    var classesButton = document.getElementById('btnClasses'); // Botão "Horários"
     var calendar; // Variável para a instância do calendário
 
     // Se não houver um botão de agendamento ou um calendário nesta página, 
     // não continue executando o script.
-    if (!calendarEl || !scheduleButton) {
+    if (!calendarEl) {
         return;
     }
 
@@ -196,13 +197,20 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // Lógica para renderizar o calendário
-    // O calendário só é desenhado na primeira vez que a aba "Agendamento" é clicada
-    scheduleButton.addEventListener('click', function () {
-        setTimeout(function () {
-            calendar.render();
-            calendar.updateSize(); // Ajusta o tamanho
-        }, 10); // Pequeno delay para garantir que o <div> está visível
-    }, {
-        once: true
-    }); // O 'once: true' garante que isso rode apenas uma vez
+    // Função auxiliar para configurar o botão (só se ele existir)
+    function setupCalendarRender(btn) {
+        if (btn) { // <--- SÓ EXECUTA SE O BOTÃO EXISTIR
+            btn.addEventListener('click', function () {
+                setTimeout(function () {
+                    calendar.render();
+                    calendar.updateSize();
+                }, 10); 
+            });
+        }
+    }
+
+    // Tenta configurar os dois botões
+    setupCalendarRender(scheduleButton);
+    setupCalendarRender(classesButton);
+
 });
