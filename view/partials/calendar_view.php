@@ -36,23 +36,35 @@ if (isset($_SESSION['user_id']) && isset($hasAssessment) && !$hasAssessment && (
     </div>
 <?php endif; ?>
 
-<div class="card shadow-sm mb-3">
-    <div class="card-body d-flex flex-wrap align-items-center justify-content-center gap-3">
-
-        <div class="d-flex align-items-center">
-            <span class="badge" style="background-color: #28a745; width: 20px; height: 20px;">&nbsp;</span>
-            <span class="ms-2 text-muted">Horários disponíveis</span>
-        </div>
-
-        <div class="d-flex align-items-center">
-            <span class="badge" style="background-color: #adb5bd; width: 20px; height: 20px;">&nbsp;</span>
-            <span class="ms-2 text-muted">Horários Esgotados</span>
-        </div>
+<?php if ($is_admin && isset($_GET['action']) && $_GET['action'] === 'admin'): ?>
+    <div class="d-flex justify-content-end mb-2">
+        <a href="index.php?action=showScheduleForm" class="btn btn-success btn-sm fw-bold shadow-sm">
+            <i class="bi bi-plus-lg me-1"></i> Novo Horário
+        </a>
     </div>
-</div>
+<?php endif; ?>
 
 <div id="calendar-container" class="card shadow-sm">
     <div class="card-body">
         <div id="calendar"></div>
     </div>
+</div>
+
+<div class="mt-3 d-flex justify-content-center flex-wrap gap-4 text-secondary small">
+    
+    <div class="d-flex align-items-center">
+        <span class="rounded-circle me-2" style="width: 10px; height: 10px; background-color: #28a745;"></span>
+        <span>Disponíveis</span>
+    </div>
+
+    <div class="d-flex align-items-center">
+        <span class="rounded-circle me-2" style="width: 10px; height: 10px; background-color: #adb5bd;"></span>
+        <span>Esgotados</span>
+    </div>
+
+    <div class="d-flex align-items-center">
+        <span class="rounded-circle me-2" style="width: 10px; height: 10px; background-color: #17a2b8;"></span>
+        <span>Seus Agendamentos</span>
+    </div>
+
 </div>

@@ -7,46 +7,45 @@
     <div id="main-content-wrapper">
         <?php require __DIR__ . '/partials/navbar.php'; ?>
 
-        <!-- Toggle Usuários / Horários -->
-        <div class="container text-center py-4">
-            <?php
-            $btn1Id = "btnUsers";
-            $btn1Text = "Usuários";
-            $btn2Id = "btnClasses";
-            $btn2Text = "Horários";
-            $conteudo1Id = "contentUsers";
-            $conteudo2Id = "contentClasses";
-            $btn1Active = true;
+        <div class="container my-5">
+            
+            <h2 class="text-center mb-4">Painel Administrativo</h2>
 
-            require __DIR__ . '/partials/btn_toggle.php';
-            ?>
-        </div>
+            <ul class="nav nav-tabs mb-4" id="adminTab" role="tablist">
+                
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="schedules-tab" data-bs-toggle="tab" data-bs-target="#schedules" type="button" role="tab" aria-controls="schedules" aria-selected="true">
+                        <i class="bi bi-calendar-week me-2"></i>Gestão de Horários
+                    </button>
+                </li>
 
-        <div id="contentUsers" class="container my-5">
-            <?php require __DIR__ . '/partials/admin_users.php'; ?>
-        </div>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="users-tab" data-bs-toggle="tab" data-bs-target="#users" type="button" role="tab" aria-controls="users" aria-selected="false">
+                        <i class="bi bi-people me-2"></i>Alunos Cadastrados
+                    </button>
+                </li>
 
-        <div id="contentClasses" class="container my-5" style="display:none;">
+            </ul>
 
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h4 class="mb-0">Gerenciar Horários</h4>
-                <a href="index.php?action=showScheduleForm" class="btn btn-outline-success btn-sm">
-                    <i class="bi bi-plus-lg"></i> Novo (Formulário)
-                </a>
-            </div>
+            <div class="tab-content" id="adminTabContent">
+                
+                <div class="tab-pane fade show active" id="schedules" role="tabpanel" aria-labelledby="schedules-tab">
+                    
+                    <div class="card shadow-sm mb-5 border-0">
+                        <div class="card-body p-0">
+                            <?php require __DIR__ . '/partials/calendar_view.php'; ?>
+                        </div>
+                    </div>
 
-            <div class="card shadow-sm mb-5 border-0">
-                <div class="card-header bg-white py-3">
-                    <h5 class="card-title mb-0 text-success"><i class="bi bi-calendar3 me-2"></i>Visão Geral (Clique na data para criar)</h5>
+                    <h5 class="mb-3 text-muted">Lista Detalhada</h5>
+                    <?php require __DIR__ . '/partials/admin_schedules.php'; ?>
                 </div>
-                <div class="card-body p-0">
-                    <?php require __DIR__ . '/partials/calendar_view.php'; ?>
+
+                <div class="tab-pane fade" id="users" role="tabpanel" aria-labelledby="users-tab">
+                    <?php require __DIR__ . '/partials/admin_users.php'; ?>
                 </div>
+
             </div>
-
-            <h5 class="mb-3 text-muted">Lista Detalhada</h5>
-            <?php require __DIR__ . '/partials/admin_schedules.php'; ?>
-
         </div>
     </div>
 
@@ -63,15 +62,13 @@
                             <label class="form-label small text-muted">Data</label>
                             <input type="date" class="form-control" id="quickDate" name="date" required readonly style="background-color: #e9ecef;">
                         </div>
-
                         <div class="mb-2">
                             <label class="form-label small text-muted">Hora</label>
                             <input type="time" class="form-control" id="quickTime" name="time" required>
                         </div>
-
                         <div class="row g-2">
                             <div class="col-6">
-                                <label class="form-label small text-muted">Minutos</label>
+                                <label class="form-label small text-muted">Duração</label>
                                 <input type="number" class="form-control" name="duration_minutes" value="60" min="15" step="15" required>
                             </div>
                             <div class="col-6">
@@ -79,11 +76,9 @@
                                 <input type="number" class="form-control" name="capacity" value="3" min="1" required>
                             </div>
                         </div>
-
                         <input type="hidden" name="active" value="1">
-                        
                         <div class="d-grid mt-3">
-                            <button type="submit" class="btn btn-success btn-sm">Criar Horário</button>
+                            <button type="submit" class="btn btn-success btn-sm">Salvar</button>
                         </div>
                     </form>
                 </div>
