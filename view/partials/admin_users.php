@@ -61,29 +61,12 @@
                                         class="text-secondary" title="Editar">
                                         <i class="bi bi-pencil me-2"></i></a>
 
-                                    <a href="#" class="text-secondary" title="Excluir"
-                                        data-bs-toggle="modal" data-bs-target="#confirmDeleteModal<?= $u['id'] ?>">
-                                        <i class="bi bi-trash"></i></a>
-
-                                    <!-- Modal de confirmação -->
-                                    <div class="modal fade" id="confirmDeleteModal<?= $u['id'] ?>" tabindex="-1" aria-hidden="true">
-                                        <div class="modal-dialog modal-dialog-centered">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title">Confirmar exclusão</h5>
-                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    Tem certeza que deseja excluir o usuário <strong><?= htmlspecialchars($u['name']) ?></strong>?
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                                                    <a href="index.php?action=deleteUser&id=<?= $u['id'] ?>" class="btn btn-danger">Excluir</a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
+                                    <a href="#" class="text-secondary btn-delete-user" 
+                                       data-id="<?= $u['id'] ?>" 
+                                       data-name="<?= htmlspecialchars($u['name']) ?>"
+                                       title="Excluir">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
@@ -97,3 +80,32 @@
         <?php endif; ?>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const deleteUserBtns = document.querySelectorAll('.btn-delete-user');
+
+    deleteUserBtns.forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const id = this.getAttribute('data-id');
+            const name = this.getAttribute('data-name');
+
+            Swal.fire({
+                title: 'Tem certeza?',
+                text: `Deseja realmente excluir o usuário "${name}"? Essa ação não pode ser desfeita.`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Sim, excluir!',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = `index.php?action=deleteUser&id=${id}`;
+                }
+            });
+        });
+    });
+});
+</script>
