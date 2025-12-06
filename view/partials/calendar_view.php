@@ -5,11 +5,16 @@ $user_id = $_SESSION['user_id'] ?? null;
 
 // Verifica se é admin (Categoria 1)
 $is_admin = (isset($_SESSION['user_category']) && $_SESSION['user_category'] == 1);
+
+// Verifica se é painel do admin
+$is_admin_page = (isset($_GET['action']) && $_GET['action'] === 'admin');
+
+$enable_admin_mode = ($is_admin && $is_admin_page);
 ?>
 
 <script>
     const SESSION_USER_ID = <?= json_encode($user_id) ?>;
-    const IS_ADMIN = <?= json_encode($is_admin) ?>;
+    const IS_ADMIN = <?= json_encode($enable_admin_mode) ?>;
 </script>
 
 <?php 

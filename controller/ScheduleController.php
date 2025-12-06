@@ -200,4 +200,39 @@ class ScheduleController {
         echo json_encode($events);
         exit;
     }
+
+    // Salva novo horário, chamado pelo modal do admin
+    public function saveQuickSchedule() {
+        // 1. Verificações de Segurança
+        if (session_status() === PHP_SESSION_NONE) session_start();
+        
+        // Garante que é ADMIN
+        if (!isset($_SESSION['user_category']) || $_SESSION['user_category'] != Category::ADMIN->value) {
+            echo json_encode(["status" => "erro", "msg" => "Acesso negado"]);
+            exit;
+        }
+
+        // 2. Coleta dos Dados
+        $date = $_POST['date'] ?? '';
+        $time = $_POST['time'] ?? '';
+        $duration = $_POST['duration_minutes'] ?? 60;
+        $capacity = $_POST['capacity'] ?? 3;
+        $active = 1; // Padrão ativo
+        $adminId = $_SESSION['user_id'];
+
+        // 3. Validação Básica
+        if (empty($date) || empty($time)) {
+            echo json_encode(["status" => "erro", "msg" => "Data e Hora são obrigatórias"]);
+            exit;
+        }
+
+        // 4. Salva no Banco
+        try {
+            $this->scheduleModel->create($date, $time, $duration, $capacity, $active, $adminId);
+            echo json_encode(["status" => "ok"]);
+        } catch (Exception $e) {
+            echo json_encode(["status" => "erro", "msg" => "Erro ao salvar: " . $e->getMessage()]);
+        }
+        exit;
+    }
 }

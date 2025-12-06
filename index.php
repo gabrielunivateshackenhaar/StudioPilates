@@ -92,6 +92,11 @@ switch ($action) {
         $scheduleController->getSchedulesJson();
         break;
 
+    // Salvar horário rápido (Admin)
+    case 'saveQuickSchedule':
+        $scheduleController->saveQuickSchedule();
+        break;
+
     // Processar agendamento (chamado via AJAX pelo calendar.js)
     case 'saveBooking':
         $bookingController->saveBooking();
