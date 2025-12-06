@@ -116,6 +116,29 @@
         </div>
     </div>
 
+    <div class="modal fade" id="selectStudentModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title fw-bold">Selecionar Aluno</h5>
+                    <button type="button" class="btn-close btn-close-white" id="btnBackToManage" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="input-group mb-3 sticky-top bg-white pb-2" style="top: -1rem;">
+                        <span class="input-group-text bg-light border-end-0"><i class="bi bi-search"></i></span>
+                        <input type="text" class="form-control border-start-0 bg-light" placeholder="Buscar aluno..." id="searchStudentInput">
+                    </div>
+
+                    <div id="studentSelectionList" class="d-flex flex-column gap-2">
+                        </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
     <!-- Footer -->
     <?php require __DIR__ . '/partials/footer.php'; ?>
 

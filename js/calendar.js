@@ -225,42 +225,91 @@ document.addEventListener('DOMContentLoaded', function () {
                                     </button>
                                 `;
 
-                                // Ação de Adicionar (Abre seletor)
+                                // Ação ADICIONAR (Atualizada para novo Modal)
                                 slotDiv.querySelector('.btn-add-student').onclick = function() {
-                                    // Cria as opções do select com a lista ALL_USERS
-                                    let optionsHtml = '<option value="" disabled selected>Selecione o aluno...</option>';
-                                    ALL_USERS.forEach(u => {
-                                        optionsHtml += `<option value="${u.id}">${u.name}</option>`;
-                                    });
+                                    
+                                    // Referências aos modais
+                                    var manageModalEl = document.getElementById('manageScheduleModal');
+                                    var manageModal = bootstrap.Modal.getInstance(manageModalEl);
+                                    
+                                    var studentModalEl = document.getElementById('selectStudentModal');
+                                    var studentModal = new bootstrap.Modal(studentModalEl);
 
-                                    Swal.fire({
-                                        title: 'Adicionar Aluno',
-                                        html: `<select id="swal-input-student" class="form-select">${optionsHtml}</select>`,
-                                        showCancelButton: true,
-                                        confirmButtonText: 'Adicionar',
-                                        preConfirm: () => {
-                                            return document.getElementById('swal-input-student').value;
-                                        }
-                                    }).then((res) => {
-                                        if (res.isConfirmed && res.value) {
-                                            const fd = new FormData();
-                                            fd.append('user_id', res.value);
-                                            fd.append('schedule_id', info.event.id);
+                                    // Popula a lista de alunos
+                                    const listContainer = document.getElementById('studentSelectionList');
+                                    listContainer.innerHTML = ''; // Limpa
+
+                                    if (typeof ALL_USERS !== 'undefined') {
+                                        ALL_USERS.forEach(u => {
+                                            const btn = document.createElement('button');
+                                            btn.className = 'btn btn-outline-light text-dark text-start d-flex align-items-center p-2 border w-100 shadow-sm mb-2';
+                                            btn.innerHTML = `
+                                                <div class="bg-light text-secondary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 35px; height: 35px;">
+                                                    <i class="bi bi-person-fill fs-6"></i>
+                                                </div>
+                                                <span class="fw-medium">${u.name}</span>
+                                            `;
                                             
-                                            fetch('index.php?action=adminAddStudent', { method: 'POST', body: fd })
-                                            .then(() => {
-                                                loadScheduleData(); // Recarrega a lista
-                                                Swal.fire({
-                                                    toast: true,
-                                                    position: 'top-end',
-                                                    icon: 'success',
-                                                    title: 'Aluno adicionado',
-                                                    showConfirmButton: false,
-                                                    timer: 2000
+                                            // Ao clicar no aluno:
+                                            btn.onclick = function() {
+                                                // Feedback de loading no botão
+                                                btn.classList.add('disabled');
+                                                btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Adicionando...';
+
+                                                const fd = new FormData();
+                                                fd.append('user_id', u.id);
+                                                fd.append('schedule_id', info.event.id);
+                                                
+                                                fetch('index.php?action=adminAddStudent', { method: 'POST', body: fd })
+                                                .then(() => {
+                                                    studentModal.hide(); // Fecha seleção
+                                                    manageModal.show();  // Reabre gestão
+                                                    loadScheduleData();  // Recarrega dados
+                                                    
+                                                    Swal.fire({
+                                                        toast: true, position: 'top-end', icon: 'success',
+                                                        title: 'Aluno adicionado', showConfirmButton: false, timer: 2000
+                                                    });
                                                 });
-                                            });
-                                        }
-                                    });
+                                            };
+                                            listContainer.appendChild(btn);
+                                        });
+                                    }
+
+                                    // Lógica de busca
+                                    var searchInput = document.getElementById('searchStudentInput');
+                                    // Reseta o campo sempre que abrir o modal
+                                    searchInput.value = '';
+
+                                    // Adiciona o evento de digitação
+                                    searchInput.oninput = function() {
+                                        var term = this.value.toLowerCase();
+                                        var buttons = listContainer.querySelectorAll('button');
+
+                                        buttons.forEach(function(b) {
+                                            // Pega o texto do botão (nome do aluno)
+                                            var name = b.textContent.toLowerCase();
+
+                                            // Verifica se o termo digitado existe no nome
+                                            if (name.includes(term)) {
+                                                b.classList.remove('d-none');
+                                                b.classList.add('d-flex'); // Restaura o display flex
+                                            } else {
+                                                b.classList.add('d-none'); // Oculta
+                                                b.classList.remove('d-flex');
+                                            }
+                                        });
+                                    };
+
+                                    // Configura botão de voltar (X)
+                                    document.getElementById('btnBackToManage').onclick = function() {
+                                        studentModal.hide();
+                                        manageModal.show();
+                                    };
+
+                                    // Troca os modais
+                                    manageModal.hide();
+                                    studentModal.show();
                                 };
                             }
                             slotsContainer.appendChild(slotDiv);
@@ -318,7 +367,6 @@ document.addEventListener('DOMContentLoaded', function () {
                         }
                     });
                 };
-
                 return;
             }
 
