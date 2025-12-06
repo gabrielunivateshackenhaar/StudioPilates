@@ -125,13 +125,60 @@ document.addEventListener('DOMContentLoaded', function () {
 
             // Comportamendo para Admin, gerenciar
             if (typeof IS_ADMIN !== 'undefined' && IS_ADMIN) {
-                // Implementar modal de Edição/Exclusão
-                // Por enquanto alerta visual
+                // Formata data para exibir no título
+                const dataFormatada = info.event.start.toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+
                 Swal.fire({
-                    icon: 'info',
                     title: 'Gerenciar Horário',
-                    text: 'Em breve você poderá editar ou excluir este horário aqui.',
-                    confirmButtonText: 'Ok'
+                    text: dataFormatada,
+                    icon: 'info',
+                    showDenyButton: true,
+                    showCancelButton: true,
+                    confirmButtonText: 'Editar',
+                    confirmButtonColor: '#ffc107', // Amarelo
+                    denyButtonText: 'Excluir',
+                    denyButtonColor: '#d33',       // Vermelho
+                    cancelButtonText: 'Fechar'
+                }).then((result) => {
+                    
+                    if (result.isConfirmed) {
+                        // Lógica de EDIÇÃO (Faremos no próximo passo)
+                        Swal.fire('Em breve', 'Edição será implementada a seguir', 'info');
+                    
+                    } else if (result.isDenied) {
+                        // Lógica de EXCLUSÃO
+                        Swal.fire({
+                            title: 'Tem certeza?',
+                            text: "Isso apagará o horário e cancelará os agendamentos dele!",
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#d33',
+                            cancelButtonColor: '#3085d6',
+                            confirmButtonText: 'Sim, excluir!',
+                            cancelButtonText: 'Cancelar'
+                        }).then((confirmResult) => {
+                            if (confirmResult.isConfirmed) {
+                                
+                                // Envia pedido de exclusão via AJAX
+                                const formData = new FormData();
+                                formData.append('id', info.event.id);
+
+                                fetch('index.php?action=deleteScheduleAjax', {
+                                    method: 'POST',
+                                    body: formData
+                                })
+                                .then(resp => resp.json())
+                                .then(data => {
+                                    if (data.status === 'ok') {
+                                        info.event.remove(); // Remove visualmente do calendário
+                                        Swal.fire('Excluído!', 'O horário foi removido.', 'success');
+                                    } else {
+                                        Swal.fire('Erro', data.msg, 'error');
+                                    }
+                                });
+                            }
+                        });
+                    }
                 });
                 return;
             }

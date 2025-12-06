@@ -88,6 +88,16 @@ switch ($action) {
         $scheduleController->saveSchedule();
         break;
 
+    // Excluir horário (Tabela)
+    case 'deleteSchedule':
+        $scheduleController->deleteSchedule();
+        break;
+
+    // Excluir horário (Calendário JS)
+    case 'deleteScheduleAjax':
+        $scheduleController->deleteScheduleAjax();
+        break;
+
     case 'getSchedulesJson':
         $scheduleController->getSchedulesJson();
         break;

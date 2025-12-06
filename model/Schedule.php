@@ -48,4 +48,17 @@ class Schedule {
         ");
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    /**
+     * Exclui um horário e seus agendamentos vinculados.
+     */
+    public function delete(int $id) {
+        // 1. Remove agendamentos deste horário (limpeza)
+        $stmtBookings = $this->pdo->prepare("DELETE FROM bookings WHERE schedule_id = ?");
+        $stmtBookings->execute([$id]);
+
+        // 2. Remove o horário
+        $stmtSchedule = $this->pdo->prepare("DELETE FROM schedules WHERE id = ?");
+        return $stmtSchedule->execute([$id]);
+    }
 }

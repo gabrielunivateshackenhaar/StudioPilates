@@ -235,4 +235,49 @@ class ScheduleController {
         }
         exit;
     }
+
+    /**
+     * Exclusão via TABELA (Redireciona)
+     */
+    public function deleteSchedule() {
+        $this->checkAdmin();
+        
+        $id = $_GET['id'] ?? null;
+        if ($id) {
+            $this->scheduleModel->delete($id);
+        }
+
+        header("Location: index.php?action=admin&status=deleted");
+        exit;
+    }
+
+    /**
+     * Exclusão via CALENDÁRIO/AJAX (Retorna JSON)
+     */
+    public function deleteScheduleAjax() {
+        $this->checkAdmin();
+
+        $id = $_POST['id'] ?? null;
+        
+        if ($id && $this->scheduleModel->delete($id)) {
+            echo json_encode(["status" => "ok"]);
+        } else {
+            echo json_encode(["status" => "erro", "msg" => "Erro ao excluir"]);
+        }
+        exit;
+    }
+
+    // Método auxiliar para não repetir código de verificação
+    private function checkAdmin() {
+        if (session_status() === PHP_SESSION_NONE) session_start();
+        if (!isset($_SESSION['user_category']) || $_SESSION['user_category'] != Category::ADMIN->value) {
+            // Se for AJAX, retorna JSON, se for normal, redireciona
+            if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
+                 echo json_encode(["status" => "erro", "msg" => "Acesso negado"]);
+                 exit;
+            }
+            header("Location: index.php");
+            exit;
+        }
+    }
 }

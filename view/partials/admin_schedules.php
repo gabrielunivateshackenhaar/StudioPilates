@@ -56,9 +56,11 @@ $schedules = $schedules ?? [];
                                         class="text-secondary" title="Editar">
                                         <i class="bi bi-pencil me-2"></i></a>
 
-                                    <a href="#" class="text-secondary" title="Excluir"
-                                        data-bs-toggle="modal" data-bs-target="#confirmDeleteModal<?= $s['id'] ?>">
-                                        <i class="bi bi-trash"></i></a>
+                                    <a href="#" class="text-secondary btn-delete-schedule" 
+                                       data-id="<?= $s['id'] ?>" 
+                                       title="Excluir">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
                                     
                                 </td>
                             </tr>
@@ -73,3 +75,32 @@ $schedules = $schedules ?? [];
         <?php endif; ?>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const deleteBtns = document.querySelectorAll('.btn-delete-schedule');
+
+    deleteBtns.forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const id = this.getAttribute('data-id');
+
+            Swal.fire({
+                title: 'Tem certeza?',
+                text: "Você não poderá reverter isso! Todos os agendamentos desta aula serão cancelados.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Sim, excluir!',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Redireciona para a rota de exclusão (via Tabela)
+                    window.location.href = `index.php?action=deleteSchedule&id=${id}`;
+                }
+            });
+        });
+    });
+});
+</script>
