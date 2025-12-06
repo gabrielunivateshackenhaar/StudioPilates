@@ -280,4 +280,31 @@ class ScheduleController {
             exit;
         }
     }
+
+    /**
+     * Retorna os detalhes de um horário (Alunos inscritos + Info básica)
+     */
+    public function getScheduleDetails() {
+        $this->checkAdmin();
+
+        $id = $_GET['id'] ?? null;
+        if (!$id) exit;
+
+        // 1. Pega info da aula
+        // (Aqui vamos fazer uma query rápida direta ou criar um getById no model, 
+        //  vamos reusar getAll filtrando ou fazer query direta pra ser rápido)
+        $stmt = $this->pdo->prepare("SELECT * FROM schedules WHERE id = ?");
+        $stmt->execute([$id]);
+        $schedule = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        // 2. Pega alunos inscritos
+        $bookings = $this->bookingModel->getUsersBySchedule($id);
+
+        echo json_encode([
+            "status" => "ok",
+            "schedule" => $schedule,
+            "bookings" => $bookings
+        ]);
+        exit;
+    }
 }

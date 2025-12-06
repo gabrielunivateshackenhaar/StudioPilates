@@ -25,8 +25,6 @@ $schedules = $schedules ?? [];
                             <th>Hora</th>
                             <th>Duração</th> 
                             <th>Vagas</th>
-                            <th>Status</th>
-                            <th>Criado por</th>
                             <th class="text-center">Ações</th>
                         </tr>
                     </thead>
@@ -43,14 +41,6 @@ $schedules = $schedules ?? [];
                                     echo "{$vagas_restantes} / {$s['capacity']}";
                                     ?>
                                 </td>
-                                <td>
-                                    <?php if ($s['active'] == 1): ?>
-                                        <span class="badge bg-success">Ativo</span>
-                                    <?php else: ?>
-                                        <span class="badge bg-secondary">Inativo</span>
-                                    <?php endif; ?>
-                                </td>
-                                <td><?= htmlspecialchars($s['admin_name'] ?? '-') ?></td>
                                 <td class="text-center">
                                     <a href="index.php?action=editSchedule&id=<?= $s['id'] ?>"
                                         class="text-secondary" title="Editar">

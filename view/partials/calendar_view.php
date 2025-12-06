@@ -10,11 +10,25 @@ $is_admin = (isset($_SESSION['user_category']) && $_SESSION['user_category'] == 
 $is_admin_page = (isset($_GET['action']) && $_GET['action'] === 'admin');
 
 $enable_admin_mode = ($is_admin && $is_admin_page);
+
+// SE FOR ADMIN: Busca lista simplificada de alunos para o seletor
+$all_users_json = '[]';
+if ($enable_admin_mode) {
+    // Precisamos acessar o banco aqui rapidinho ou usar o controller. 
+    // Como é um partial, vamos usar o $pdo global que já existe no escopo.
+    global $pdo;
+    if ($pdo) {
+        $stmt = $pdo->query("SELECT id, name FROM users WHERE category = 0 ORDER BY name ASC");
+        $all_users = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $all_users_json = json_encode($all_users);
+    }
+}
 ?>
 
 <script>
     const SESSION_USER_ID = <?= json_encode($user_id) ?>;
     const IS_ADMIN = <?= json_encode($enable_admin_mode) ?>;
+    const ALL_USERS = <?= $all_users_json ?>;
 </script>
 
 <?php 

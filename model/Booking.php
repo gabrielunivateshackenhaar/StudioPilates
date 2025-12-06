@@ -75,4 +75,26 @@ class Booking {
         // FETCH_COLUMN retorna um array simples [1, 5, 8] em vez de [[id=>1], [id=>5]...]
         return $stmt->fetchAll(PDO::FETCH_COLUMN);
     }
+
+    /**
+     * Busca os usuários inscritos em um horário específico
+     */
+    public function getUsersBySchedule(int $scheduleId) {
+        $stmt = $this->pdo->prepare("
+            SELECT b.id as booking_id, u.id as user_id, u.name 
+            FROM bookings b
+            JOIN users u ON b.user_id = u.id
+            WHERE b.schedule_id = ?
+        ");
+        $stmt->execute([$scheduleId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Deleta um agendamento pelo ID
+     */
+    public function delete(int $id) {
+        $stmt = $this->pdo->prepare("DELETE FROM bookings WHERE id = ?");
+        return $stmt->execute([$id]);
+    }
 }

@@ -102,6 +102,11 @@ switch ($action) {
         $scheduleController->getSchedulesJson();
         break;
 
+    // Admin: Detalhes do horário
+    case 'getScheduleDetails':
+        $scheduleController->getScheduleDetails();
+        break;
+
     // Salvar horário rápido (Admin)
     case 'saveQuickSchedule':
         $scheduleController->saveQuickSchedule();
@@ -110,6 +115,16 @@ switch ($action) {
     // Processar agendamento (chamado via AJAX pelo calendar.js)
     case 'saveBooking':
         $bookingController->saveBooking();
+        break;
+
+    // Admin: Remover aluno da aula
+    case 'deleteBooking':
+        $bookingController->deleteBooking();
+        break;
+
+    // Admin: Adicionar aluno na aula
+    case 'adminAddStudent':
+        $bookingController->adminAddStudent();
         break;
 
     // Exibir formulário de confirmação

@@ -42,4 +42,39 @@ class BookingController {
             exit;
         }
     }
+    
+    // Método para Admin adicionar aluno manualmente (usando a mesma lógica de criar)
+    public function adminAddStudent() {
+        // Aproveita a lógica existente, só muda a validação de sessão
+        if (session_status() === PHP_SESSION_NONE) session_start();
+        
+        $user_id = $_POST['user_id'];
+        $schedule_id = $_POST['schedule_id'];
+
+        if ($this->bookingModel->create($user_id, $schedule_id)) {
+            echo json_encode(["status" => "ok"]);
+        } else {
+            echo json_encode(["status" => "erro", "msg" => "Erro ao adicionar"]);
+        }
+        exit;
+    }
+
+    public function deleteBooking() {
+        if (session_status() === PHP_SESSION_NONE) session_start();
+
+        // Só admin pode deletar reserva dos outros assim
+        if (!isset($_SESSION['user_category']) || $_SESSION['user_category'] != 1) { 
+            echo json_encode(["status" => "erro", "msg" => "Sem permissão"]);
+            exit;
+        }
+
+        $booking_id = $_POST['booking_id'] ?? null;
+        
+        if ($booking_id && $this->bookingModel->delete($booking_id)) {
+            echo json_encode(["status" => "ok"]);
+        } else {
+            echo json_encode(["status" => "erro", "msg" => "Erro ao excluir"]);
+        }
+        exit;
+    }
 }

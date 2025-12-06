@@ -125,61 +125,146 @@ document.addEventListener('DOMContentLoaded', function () {
 
             // Comportamendo para Admin, gerenciar
             if (typeof IS_ADMIN !== 'undefined' && IS_ADMIN) {
-                // Formata data para exibir no título
-                const dataFormatada = info.event.start.toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+                // Formata dados visuais
+                const dateObj = info.event.start;
+                const timeStr = dateObj.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+                const dateStr = dateObj.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' });
 
-                Swal.fire({
-                    title: 'Gerenciar Horário',
-                    text: dataFormatada,
-                    icon: 'info',
-                    showDenyButton: true,
-                    showCancelButton: true,
-                    confirmButtonText: 'Editar',
-                    confirmButtonColor: '#ffc107', // Amarelo
-                    denyButtonText: 'Excluir',
-                    denyButtonColor: '#d33',       // Vermelho
-                    cancelButtonText: 'Fechar'
-                }).then((result) => {
-                    
-                    if (result.isConfirmed) {
-                        // Lógica de EDIÇÃO (Faremos no próximo passo)
-                        Swal.fire('Em breve', 'Edição será implementada a seguir', 'info');
-                    
-                    } else if (result.isDenied) {
-                        // Lógica de EXCLUSÃO
-                        Swal.fire({
-                            title: 'Tem certeza?',
-                            text: "Isso apagará o horário e cancelará os agendamentos dele!",
-                            icon: 'warning',
-                            showCancelButton: true,
-                            confirmButtonColor: '#d33',
-                            cancelButtonColor: '#3085d6',
-                            confirmButtonText: 'Sim, excluir!',
-                            cancelButtonText: 'Cancelar'
-                        }).then((confirmResult) => {
-                            if (confirmResult.isConfirmed) {
-                                
-                                // Envia pedido de exclusão via AJAX
-                                const formData = new FormData();
-                                formData.append('id', info.event.id);
+                document.getElementById('manageTimeDisplay').textContent = timeStr;
+                document.getElementById('manageDateDisplay').textContent = dateStr;
+                const slotsContainer = document.getElementById('manageSlotsList');
+                slotsContainer.innerHTML = '<div class="text-center py-3"><div class="spinner-border text-success" role="status"></div></div>'; // Loading
 
-                                fetch('index.php?action=deleteScheduleAjax', {
-                                    method: 'POST',
-                                    body: formData
-                                })
-                                .then(resp => resp.json())
-                                .then(data => {
-                                    if (data.status === 'ok') {
-                                        info.event.remove(); // Remove visualmente do calendário
-                                        Swal.fire('Excluído!', 'O horário foi removido.', 'success');
-                                    } else {
-                                        Swal.fire('Erro', data.msg, 'error');
+                // Abre o modal primeiro
+                var modalEl = document.getElementById('manageScheduleModal');
+                var modal = new bootstrap.Modal(modalEl);
+                modal.show();
+
+                // BUSCA DADOS REAIS DO SERVIDOR
+                fetch(`index.php?action=getScheduleDetails&id=${info.event.id}`)
+                .then(resp => resp.json())
+                .then(data => {
+                    if(data.status !== 'ok') return;
+
+                    slotsContainer.innerHTML = ''; // Limpa loading
+                    const capacity = parseInt(data.schedule.capacity);
+                    const bookings = data.bookings; // Array de alunos inscritos
+
+                    // Loop para criar as vagas
+                    for (let i = 0; i < capacity; i++) {
+                        const student = bookings[i]; // Tenta pegar o aluno na posição i
+                        const slotDiv = document.createElement('div');
+                        
+                        if (student) {
+                            // --- VAGA OCUPADA ---
+                            slotDiv.className = 'd-flex justify-content-between align-items-center p-2 border rounded bg-light';
+                            slotDiv.innerHTML = `
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-person-check fs-5 text-success me-2"></i>
+                                    <span class="fw-medium text-truncate" style="max-width: 180px;">${student.name}</span>
+                                </div>
+                                <button class="btn btn-sm btn-outline-danger border-0 btn-remove-student" data-booking-id="${student.booking_id}">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            `;
+                            
+                            // Ação de remover
+                            slotDiv.querySelector('.btn-remove-student').onclick = function() {
+                                Swal.fire({
+                                    title: 'Remover aluno?',
+                                    text: `Tirar ${student.name} desta aula?`,
+                                    icon: 'warning',
+                                    showCancelButton: true, confirmButtonColor: '#d33', confirmButtonText: 'Sim, remover'
+                                }).then((r) => {
+                                    if(r.isConfirmed) {
+                                        const fd = new FormData();
+                                        fd.append('booking_id', student.booking_id);
+                                        fetch('index.php?action=deleteBooking', { method: 'POST', body: fd })
+                                        .then(() => {
+                                            modal.hide(); // Fecha e recarrega evento
+                                            calendar.refetchEvents();
+                                            Swal.fire('Removido', '', 'success');
+                                        });
                                     }
                                 });
-                            }
-                        });
+                            };
+
+                        } else {
+                            // --- VAGA LIVRE ---
+                            slotDiv.className = 'd-flex justify-content-between align-items-center p-2 border rounded';
+                            slotDiv.style.borderStyle = 'dashed !important';
+                            slotDiv.innerHTML = `
+                                <span class="text-muted small fst-italic">Vaga Disponível</span>
+                                <button class="btn btn-sm btn-outline-primary rounded-circle p-1 lh-1 btn-add-student">
+                                    <i class="bi bi-plus-lg"></i>
+                                </button>
+                            `;
+
+                            // Ação de Adicionar (Abre seletor)
+                            slotDiv.querySelector('.btn-add-student').onclick = function() {
+                                // Cria as opções do select com a lista ALL_USERS
+                                let optionsHtml = '<option value="" disabled selected>Selecione o aluno...</option>';
+                                ALL_USERS.forEach(u => {
+                                    optionsHtml += `<option value="${u.id}">${u.name}</option>`;
+                                });
+
+                                Swal.fire({
+                                    title: 'Adicionar Aluno',
+                                    html: `<select id="swal-input-student" class="form-select">${optionsHtml}</select>`,
+                                    showCancelButton: true,
+                                    confirmButtonText: 'Adicionar',
+                                    preConfirm: () => {
+                                        return document.getElementById('swal-input-student').value;
+                                    }
+                                }).then((res) => {
+                                    if (res.isConfirmed && res.value) {
+                                        const fd = new FormData();
+                                        fd.append('user_id', res.value);
+                                        fd.append('schedule_id', info.event.id);
+                                        
+                                        fetch('index.php?action=adminAddStudent', { method: 'POST', body: fd })
+                                        .then(() => {
+                                            modal.hide();
+                                            calendar.refetchEvents();
+                                            Swal.fire('Adicionado!', '', 'success');
+                                        });
+                                    }
+                                });
+                            };
+                        }
+                        slotsContainer.appendChild(slotDiv);
                     }
                 });
+
+                // Configura o botão de excluir a aula inteira (Mantido)
+                const btnDelete = document.getElementById('btnDeleteEntireSchedule');
+                btnDelete.onclick = function() {
+                    Swal.fire({
+                        title: 'Excluir Aula?',
+                        text: 'Isso apagará o horário e cancelará TODOS os inscritos.',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#d33',
+                        confirmButtonText: 'Sim, excluir tudo'
+                    }).then((r) => {
+                        if (r.isConfirmed) {
+                             const formData = new FormData();
+                             formData.append('id', info.event.id);
+                             fetch('index.php?action=deleteScheduleAjax', { method: 'POST', body: formData })
+                             .then(resp => resp.json())
+                             .then(data => {
+                                 modal.hide();
+                                 if (data.status === 'ok') {
+                                     info.event.remove();
+                                     Swal.fire('Excluído!', '', 'success');
+                                 } else {
+                                     Swal.fire('Erro', data.msg, 'error');
+                                 }
+                             });
+                        }
+                    });
+                };
+
                 return;
             }
 

@@ -86,6 +86,36 @@
         </div>
     </div>
 
+    <div class="modal fade" id="manageScheduleModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                
+                <div class="modal-header border-bottom-0 pb-0">
+                    <h5 class="modal-title fw-bold">Gerenciar Horário</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="text-center mb-4">
+                        <h4 class="text-success mb-0" id="manageTimeDisplay">--:--</h4>
+                        <small class="text-muted text-uppercase fw-bold" id="manageDateDisplay">---</small>
+                    </div>
+
+                    <h6 class="text-muted border-bottom pb-2 mb-3">Lista de Presença</h6>
+                    <div id="manageSlotsList" class="d-flex flex-column gap-2">
+                        </div>
+                </div>
+
+                <div class="modal-footer justify-content-center border-top-0 pt-0">
+                    <button type="button" id="btnDeleteEntireSchedule" class="btn btn-link text-danger text-decoration-none btn-sm">
+                        <i class="bi bi-trash me-1"></i> Excluir este horário
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
     <!-- Footer -->
     <?php require __DIR__ . '/partials/footer.php'; ?>
 
