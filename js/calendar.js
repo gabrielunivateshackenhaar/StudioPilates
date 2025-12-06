@@ -133,119 +133,164 @@ document.addEventListener('DOMContentLoaded', function () {
                 document.getElementById('manageTimeDisplay').textContent = timeStr;
                 document.getElementById('manageDateDisplay').textContent = dateStr;
                 const slotsContainer = document.getElementById('manageSlotsList');
-                slotsContainer.innerHTML = '<div class="text-center py-3"><div class="spinner-border text-success" role="status"></div></div>'; // Loading
 
                 // Abre o modal primeiro
                 var modalEl = document.getElementById('manageScheduleModal');
                 var modal = new bootstrap.Modal(modalEl);
                 modal.show();
 
-                // BUSCA DADOS REAIS DO SERVIDOR
-                fetch(`index.php?action=getScheduleDetails&id=${info.event.id}`)
-                .then(resp => resp.json())
-                .then(data => {
-                    if(data.status !== 'ok') return;
+                // Função reutilizável: carregar dados
+                // É chamada de novo ao remover/adicionar
+                const loadScheduleData = () => {
+                    // Mostra loading enquanto carrega
+                    slotsContainer.innerHTML = '<div class="text-center py-3"><div class="spinner-border text-success" role="status"></div></div>';
 
-                    slotsContainer.innerHTML = ''; // Limpa loading
-                    const capacity = parseInt(data.schedule.capacity);
-                    const bookings = data.bookings; // Array de alunos inscritos
+                    fetch(`index.php?action=getScheduleDetails&id=${info.event.id}`)
+                    .then(resp => resp.json())
+                    .then(data => {
+                        if(data.status !== 'ok') return;
 
-                    // Loop para criar as vagas
-                    for (let i = 0; i < capacity; i++) {
-                        const student = bookings[i]; // Tenta pegar o aluno na posição i
-                        const slotDiv = document.createElement('div');
-                        
-                        if (student) {
-                            // --- VAGA OCUPADA ---
-                            slotDiv.className = 'd-flex justify-content-between align-items-center p-2 border rounded bg-light';
-                            slotDiv.innerHTML = `
-                                <div class="d-flex align-items-center">
-                                    <i class="bi bi-person-check fs-5 text-success me-2"></i>
-                                    <span class="fw-medium text-truncate" style="max-width: 180px;">${student.name}</span>
-                                </div>
-                                <button class="btn btn-sm btn-outline-danger border-0 btn-remove-student" data-booking-id="${student.booking_id}">
-                                    <i class="bi bi-trash"></i>
-                                </button>
-                            `;
+                        slotsContainer.innerHTML = ''; // Limpa loading
+                        const capacity = parseInt(data.schedule.capacity);
+                        const bookings = data.bookings; // Array de alunos inscritos
+
+                        // Atualiza o calendário de fundo (para refletir cores/vagas)
+                        calendar.refetchEvents();
+
+                        // Loop para criar as linhas
+                        for (let i = 0; i < capacity; i++) {
+                            const student = bookings[i]; // Tenta pegar o aluno na posição i
+                            const slotDiv = document.createElement('div');
                             
-                            // Ação de remover
-                            slotDiv.querySelector('.btn-remove-student').onclick = function() {
-                                Swal.fire({
-                                    title: 'Remover aluno?',
-                                    text: `Tirar ${student.name} desta aula?`,
-                                    icon: 'warning',
-                                    showCancelButton: true, confirmButtonColor: '#d33', confirmButtonText: 'Sim, remover'
-                                }).then((r) => {
-                                    if(r.isConfirmed) {
-                                        const fd = new FormData();
-                                        fd.append('booking_id', student.booking_id);
-                                        fetch('index.php?action=deleteBooking', { method: 'POST', body: fd })
-                                        .then(() => {
-                                            modal.hide(); // Fecha e recarrega evento
-                                            calendar.refetchEvents();
-                                            Swal.fire('Removido', '', 'success');
-                                        });
-                                    }
-                                });
-                            };
+                            if (student) {
+                                // --- VAGA OCUPADA ---
+                                slotDiv.className = 'd-flex justify-content-between align-items-center p-2 border rounded bg-light';
+                                slotDiv.innerHTML = `
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-person-check fs-5 text-success me-2"></i>
+                                        <span class="fw-medium text-truncate" style="max-width: 180px;">${student.name}</span>
+                                    </div>
+                                    <button class="btn btn-sm btn-outline-danger border-0 btn-remove-student" data-booking-id="${student.booking_id}">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                `;
+                                
+                                // Ação de remover
+                                slotDiv.querySelector('.btn-remove-student').onclick = function() {
+                                    Swal.fire({
+                                        text: `Remover ${student.name}?`,
+                                        icon: 'warning',
+                                        iconColor: '#d33',
+                                        width: '320px',
+                                        padding: '1.2rem',
+                                        showCancelButton: true,
+                                        reverseButtons: true,
+                                        confirmButtonText: 'Sim, remover',
+                                        cancelButtonText: 'Cancelar',
+                                        buttonsStyling: false,
+                                        customClass: {
+                                            popup: 'rounded-4',
+                                            htmlContainer: 'small mb-3',
+                                            confirmButton: 'btn btn-danger btn-sm px-3',
+                                            cancelButton: 'btn btn-light btn-sm px-3 me-2'
+                                        }
+                                    }).then((r) => {
+                                        if(r.isConfirmed) {
+                                            const fd = new FormData();
+                                            fd.append('booking_id', student.booking_id);
+                                            fetch('index.php?action=deleteBooking', { method: 'POST', body: fd })
+                                            .then(() => {
+                                                loadScheduleData(); // Recarrega a lista em vez de fechar
+                                                Swal.fire({
+                                                    toast: true,
+                                                    position: 'top-end',
+                                                    icon: 'success',
+                                                    title: 'Aluno removido',
+                                                    showConfirmButton: false,
+                                                    timer: 2000
+                                                });
+                                            });
+                                        }
+                                    });
+                                };
 
-                        } else {
                             // --- VAGA LIVRE ---
-                            slotDiv.className = 'd-flex justify-content-between align-items-center p-2 border rounded';
-                            slotDiv.style.borderStyle = 'dashed !important';
-                            slotDiv.innerHTML = `
-                                <span class="text-muted small fst-italic">Vaga Disponível</span>
-                                <button class="btn btn-sm btn-outline-primary rounded-circle p-1 lh-1 btn-add-student">
-                                    <i class="bi bi-plus-lg"></i>
-                                </button>
-                            `;
+                            } else {
+                                slotDiv.className = 'd-flex justify-content-between align-items-center p-2 border rounded';
+                                slotDiv.style.borderStyle = 'dashed !important';
+                                slotDiv.innerHTML = `
+                                    <span class="text-muted small fst-italic">Vaga Disponível</span>
+                                    <button class="btn btn-sm btn-outline-primary rounded-circle p-1 lh-1 btn-add-student">
+                                        <i class="bi bi-plus-lg"></i>
+                                    </button>
+                                `;
 
-                            // Ação de Adicionar (Abre seletor)
-                            slotDiv.querySelector('.btn-add-student').onclick = function() {
-                                // Cria as opções do select com a lista ALL_USERS
-                                let optionsHtml = '<option value="" disabled selected>Selecione o aluno...</option>';
-                                ALL_USERS.forEach(u => {
-                                    optionsHtml += `<option value="${u.id}">${u.name}</option>`;
-                                });
+                                // Ação de Adicionar (Abre seletor)
+                                slotDiv.querySelector('.btn-add-student').onclick = function() {
+                                    // Cria as opções do select com a lista ALL_USERS
+                                    let optionsHtml = '<option value="" disabled selected>Selecione o aluno...</option>';
+                                    ALL_USERS.forEach(u => {
+                                        optionsHtml += `<option value="${u.id}">${u.name}</option>`;
+                                    });
 
-                                Swal.fire({
-                                    title: 'Adicionar Aluno',
-                                    html: `<select id="swal-input-student" class="form-select">${optionsHtml}</select>`,
-                                    showCancelButton: true,
-                                    confirmButtonText: 'Adicionar',
-                                    preConfirm: () => {
-                                        return document.getElementById('swal-input-student').value;
-                                    }
-                                }).then((res) => {
-                                    if (res.isConfirmed && res.value) {
-                                        const fd = new FormData();
-                                        fd.append('user_id', res.value);
-                                        fd.append('schedule_id', info.event.id);
-                                        
-                                        fetch('index.php?action=adminAddStudent', { method: 'POST', body: fd })
-                                        .then(() => {
-                                            modal.hide();
-                                            calendar.refetchEvents();
-                                            Swal.fire('Adicionado!', '', 'success');
-                                        });
-                                    }
-                                });
-                            };
+                                    Swal.fire({
+                                        title: 'Adicionar Aluno',
+                                        html: `<select id="swal-input-student" class="form-select">${optionsHtml}</select>`,
+                                        showCancelButton: true,
+                                        confirmButtonText: 'Adicionar',
+                                        preConfirm: () => {
+                                            return document.getElementById('swal-input-student').value;
+                                        }
+                                    }).then((res) => {
+                                        if (res.isConfirmed && res.value) {
+                                            const fd = new FormData();
+                                            fd.append('user_id', res.value);
+                                            fd.append('schedule_id', info.event.id);
+                                            
+                                            fetch('index.php?action=adminAddStudent', { method: 'POST', body: fd })
+                                            .then(() => {
+                                                loadScheduleData(); // Recarrega a lista
+                                                Swal.fire({
+                                                    toast: true,
+                                                    position: 'top-end',
+                                                    icon: 'success',
+                                                    title: 'Aluno adicionado',
+                                                    showConfirmButton: false,
+                                                    timer: 2000
+                                                });
+                                            });
+                                        }
+                                    });
+                                };
+                            }
+                            slotsContainer.appendChild(slotDiv);
                         }
-                        slotsContainer.appendChild(slotDiv);
-                    }
-                });
+                    });
+                };
 
-                // Configura o botão de excluir a aula inteira (Mantido)
+                // Chama a função pela primeira vez
+                loadScheduleData();
+
+                // Configura o botão de excluir a aula inteira
                 const btnDelete = document.getElementById('btnDeleteEntireSchedule');
                 btnDelete.onclick = function() {
                     Swal.fire({
-                        title: 'Excluir Aula?',
-                        text: 'Isso apagará o horário e cancelará TODOS os inscritos.',
+                        text: 'Tem certeza que deseja excluir esta aula e todos os inscritos?',
                         icon: 'warning',
+                        iconColor: '#d33',
+                        width: '320px',
+                        padding: '1.2rem',
                         showCancelButton: true,
-                        confirmButtonColor: '#d33',
-                        confirmButtonText: 'Sim, excluir tudo'
+                        reverseButtons: true,
+                        confirmButtonText: 'Sim, excluir',
+                        cancelButtonText: 'Cancelar',
+                        buttonsStyling: false, // Desliga o padrão do SweetAlert para usar Bootstrap
+                        customClass: { // Aplica classes do Bootstrap 5
+                            popup: 'rounded-4',
+                            htmlContainer: 'small mb-3',
+                            confirmButton: 'btn btn-danger btn-sm px-3',
+                            cancelButton: 'btn btn-light btn-sm px-3 me-2'
+                        }
                     }).then((r) => {
                         if (r.isConfirmed) {
                              const formData = new FormData();
@@ -254,9 +299,18 @@ document.addEventListener('DOMContentLoaded', function () {
                              .then(resp => resp.json())
                              .then(data => {
                                  modal.hide();
+                                 calendar.refetchEvents();
                                  if (data.status === 'ok') {
                                      info.event.remove();
-                                     Swal.fire('Excluído!', '', 'success');
+                                     // Toast discreto de sucesso
+                                     Swal.fire({
+                                         toast: true,
+                                         position: 'top-end',
+                                         icon: 'success',
+                                         title: 'Aula excluída',
+                                         showConfirmButton: false,
+                                         timer: 2000
+                                     });
                                  } else {
                                      Swal.fire('Erro', data.msg, 'error');
                                  }
@@ -408,8 +462,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
                     // Sucesso
                     Swal.fire({
-                        icon: 'success', title: 'Criado!',
-                        text: 'Horário adicionado.', timer: 1500, showConfirmButton: false
+                        toast: true,
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Horário criado!',
+                        showConfirmButton: false,
+                        timer: 3000
                     });
 
                     // Atualiza calendário
