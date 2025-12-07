@@ -59,8 +59,15 @@ if (isset($_SESSION['user_id']) && isset($hasAssessment) && !$hasAssessment && (
                 data-bs-toggle="tooltip" 
                 data-bs-html="true"
                 data-bs-placement="left"
-                title="• Clique em uma data vazia para criar um horário individual.<br>• Clique em um horário existente para gerenciar.">
+                title="• Clique em uma data vazia para criar um horário.<br>• Clique em um horário existente para gerenciar.">
             <i class="bi bi-info-lg"></i>
+        </button>
+
+        <button class="btn btn-success btn-sm fw-bold shadow-sm d-flex align-items-center" 
+                style="height: 32px;"
+                data-bs-toggle="modal" 
+                data-bs-target="#recurringBookingModal" >
+            <i class="bi bi-repeat me-1"></i> Recorrente
         </button>
 
         <button class="btn btn-success btn-sm fw-bold shadow-sm d-flex align-items-center" 

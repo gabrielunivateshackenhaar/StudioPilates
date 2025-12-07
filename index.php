@@ -162,6 +162,11 @@ switch ($action) {
         $scheduleController->generateSchedules();
         break;
 
+    // Salvar recorrente
+    case 'saveRecurringBooking':
+        $bookingController->saveRecurringBooking();
+        break;
+
     // Default: redireciona para home
     default:
         $userController->home();

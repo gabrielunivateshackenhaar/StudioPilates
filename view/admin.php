@@ -37,8 +37,8 @@
                         </div>
                     </div>
 
-                    <h5 class="mb-3 text-muted">Lista Detalhada</h5>
-                    <?php require __DIR__ . '/partials/admin_schedules.php'; ?>
+                    <!-- <h5 class="mb-3 text-muted">Lista Detalhada</h5> Removido horários em listagem -->
+                    <!-- <?php require __DIR__ . '/partials/admin_schedules.php'; ?> -->
                 </div>
 
                 <div class="tab-pane fade" id="users" role="tabpanel" aria-labelledby="users-tab">
@@ -49,6 +49,7 @@
         </div>
     </div>
 
+    <!-- Criação de horários rápido -->
     <div class="modal fade" id="createScheduleModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-sm">
             <div class="modal-content">
@@ -86,6 +87,7 @@
         </div>
     </div>
 
+    <!-- Gerenciamento de horários -->
     <div class="modal fade" id="manageScheduleModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -116,6 +118,7 @@
         </div>
     </div>
 
+    <!-- Seletor de usuários -->
     <div class="modal fade" id="selectStudentModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
@@ -139,6 +142,7 @@
         </div>
     </div>
 
+    <!-- Geração de grade de horários -->
     <div class="modal fade" id="bulkScheduleModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -214,6 +218,68 @@
 
                         <div class="d-grid mt-4">
                             <button type="submit" class="btn btn-success">Gerar Grade</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Aulas recorrentes -->
+    <div class="modal fade" id="recurringBookingModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title fw-bold">Agendamento Recorrente</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="recurringBookingForm">
+                        
+                        <div class="mb-3">
+                            <label class="form-label small text-muted">Aluno</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="recurringStudentName" placeholder="Selecione um aluno..." readonly required style="background-color: #fff;">
+                                <input type="hidden" name="user_id" id="recurringStudentId">
+                                <button class="btn btn-outline-primary" type="button" id="btnOpenUserSelector">
+                                    <i class="bi bi-search"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="row g-2 mb-3">
+                            <div class="col-6">
+                                <label class="form-label small text-muted">Data de Início</label>
+                                <input type="date" class="form-control" name="start_date" required>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label small text-muted">Horário da Aula</label>
+                                <input type="time" class="form-control" name="time" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small text-muted">Dias da Semana</label>
+                            <div class="d-flex flex-wrap gap-2">
+                                <?php 
+                                $dias = [1=>'Seg', 2=>'Ter', 3=>'Qua', 4=>'Qui', 5=>'Sex', 6=>'Sáb'];
+                                foreach($dias as $val => $label): ?>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" name="days[]" value="<?= $val ?>" id="r_day_<?= $val ?>">
+                                        <label class="form-check-label" for="r_day_<?= $val ?>"><?= $label ?></label>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small text-muted">Quantidade de Aulas</label>
+                            <input type="number" class="form-control" name="quantity" value="4" min="1" max="50" required>
+                            <div class="form-text">O sistema buscará os próximos horários disponíveis para agendar.</div>
+                        </div>
+
+                        <div class="d-grid mt-4">
+                            <button type="submit" class="btn btn-success">Confirmar Agendamentos</button>
                         </div>
                     </form>
                 </div>

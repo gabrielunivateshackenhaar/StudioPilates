@@ -61,4 +61,32 @@ class Schedule {
         $stmtSchedule = $this->pdo->prepare("DELETE FROM schedules WHERE id = ?");
         return $stmtSchedule->execute([$id]);
     }
+
+    /**
+     * Busca um horário específico para validação de vaga.
+     * Retorna o ID e se tem vaga disponível.
+     */
+    public function findOpenSlot(string $date, string $time) {
+        // Busca o horário e conta quantos agendamentos confirmados (status=0) ele já tem
+        $sql = "
+            SELECT s.id, s.capacity, 
+                   (SELECT COUNT(*) FROM bookings b WHERE b.schedule_id = s.id AND b.status = 0) as booked_count
+            FROM schedules s
+            WHERE s.date = ? AND s.time = ? AND s.active = 1
+        ";
+        
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([$date, $time]);
+        $schedule = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($schedule) {
+            $vagas = $schedule['capacity'] - $schedule['booked_count'];
+            return [
+                'id' => $schedule['id'],
+                'has_space' => ($vagas > 0)
+            ];
+        }
+
+        return null; // Horário não existe
+    }
 }

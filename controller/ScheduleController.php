@@ -317,52 +317,73 @@ class ScheduleController {
         // Coleta dados
         $startDate = new DateTime($_POST['start_date']);
         $endDate   = new DateTime($_POST['end_date']);
-        $daysOfWeek = $_POST['days'] ?? []; // Array de dias (1=seg, 7=dom)
-        
+        $daysOfWeek = $_POST['days'] ?? []; 
         $startTimeStr = $_POST['start_time'];
         $endTimeStr   = $_POST['end_time'];
-        
         $duration = (int)$_POST['duration'];
         $capacity = (int)$_POST['capacity'];
         $adminId  = $_SESSION['user_id'];
 
         $countCreated = 0;
+        $errors = [];
 
-        // Loop pelos dias (Do início ao fim)
-        while ($startDate <= $endDate) {
-            
-            // Verifica se o dia da semana atual está marcado (N em PHP: 1=Seg, 7=Dom)
-            if (in_array($startDate->format('N'), $daysOfWeek)) {
+        // --- INICIA A TRANSAÇÃO ---
+        $this->pdo->beginTransaction();
+
+        try {
+            // Loop pelos dias
+            while ($startDate <= $endDate) {
                 
-                // Loop pelas horas (Do início ao fim do dia)
-                $currentSlot = new DateTime($startDate->format('Y-m-d') . ' ' . $startTimeStr);
-                $endSlot     = new DateTime($startDate->format('Y-m-d') . ' ' . $endTimeStr);
-
-                while ($currentSlot <= $endSlot) {
+                if (in_array($startDate->format('N'), $daysOfWeek)) {
                     
-                    $dateDb = $currentSlot->format('Y-m-d');
-                    $timeDb = $currentSlot->format('H:i');
+                    $currentSlot = new DateTime($startDate->format('Y-m-d') . ' ' . $startTimeStr);
+                    $endSlot     = new DateTime($startDate->format('Y-m-d') . ' ' . $endTimeStr);
 
-                    // Tenta criar (ignora erros silenciosamente ou checa duplicidade se quiser)
-                    // Aqui vamos apenas tentar inserir. Se já existir lógica de banco pra evitar duplos, ok.
-                    // Se não, ele cria. Idealmente, poderíamos checar antes, mas para simplicidade:
-                    try {
-                        $this->scheduleModel->create($dateDb, $timeDb, $duration, $capacity, 1, $adminId);
-                        $countCreated++;
-                    } catch (Exception $e) {
-                        // Ignora erro (provavelmente duplicado ou erro de banco) e continua
+                    // Loop pelas horas
+                    while ($currentSlot < $endSlot) { // Alterado para < para não criar aula NO minuto final se não couber
+                        
+                        $dateDb = $currentSlot->format('Y-m-d');
+                        $timeDb = $currentSlot->format('H:i');
+
+                        try {
+                            // Tenta criar
+                            $this->scheduleModel->create($dateDb, $timeDb, $duration, $capacity, 1, $adminId);
+                            $countCreated++;
+                        } catch (Exception $e) {
+                            // Se der erro, guardamos para debug, mas não paramos o loop
+                            // (Útil se tiver constraint unique no futuro)
+                            $errors[] = $e->getMessage(); 
+                        }
+
+                        $currentSlot->modify("+{$duration} minutes");
                     }
-
-                    // Avança para o próximo horário (soma duração)
-                    $currentSlot->modify("+{$duration} minutes");
                 }
+
+                $startDate->modify('+1 day');
             }
 
-            // Avança para o próximo dia
-            $startDate->modify('+1 day');
+            // Salva tudo de uma vez
+            $this->pdo->commit();
+
+        } catch (Exception $e) {
+            // Se houver um erro fatal no loop, desfaz tudo
+            $this->pdo->rollBack();
+            echo json_encode(["status" => "erro", "msg" => "Erro crítico: " . $e->getMessage()]);
+            exit;
         }
 
-        echo json_encode(["status" => "ok", "count" => $countCreated]);
+        // Retorna sucesso
+        if ($countCreated > 0) {
+            echo json_encode(["status" => "ok", "count" => $countCreated]);
+        } else {
+            // Se foi 0, pode ser que não caiba nos dias/horários ou houve erro silencioso
+            $msg = "Nenhum horário criado. Verifique as datas e dias selecionados.";
+            if (count($errors) > 0) {
+                // Pega o primeiro erro para mostrar (ex: database locked)
+                $msg .= " (Erro: " . $errors[0] . ")";
+            }
+            echo json_encode(["status" => "erro", "msg" => $msg]);
+        }
         exit;
     }
 }
