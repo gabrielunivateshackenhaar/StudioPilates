@@ -139,6 +139,88 @@
         </div>
     </div>
 
+    <div class="modal fade" id="bulkScheduleModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title fw-bold">Gerar Grade de Horários</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="bulkScheduleForm">
+                        
+                        <h6 class="text-success border-bottom pb-2">Período</h6>
+                        <div class="row g-2 mb-3">
+                            <div class="col-6">
+                                <label class="form-label small text-muted">Início</label>
+                                <input type="date" class="form-control" name="start_date" required>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label small text-muted">Fim</label>
+                                <input type="date" class="form-control" name="end_date" required>
+                            </div>
+                        </div>
+
+                        <h6 class="text-success border-bottom pb-2">Dias da Semana</h6>
+                        <div class="mb-3 d-flex flex-wrap gap-3 pt-2">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="days[]" value="1" id="seg">
+                                <label class="form-check-label" for="seg">Seg</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="days[]" value="2" id="ter">
+                                <label class="form-check-label" for="ter">Ter</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="days[]" value="3" id="qua">
+                                <label class="form-check-label" for="qua">Qua</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="days[]" value="4" id="qui">
+                                <label class="form-check-label" for="qui">Qui</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="days[]" value="5" id="sex">
+                                <label class="form-check-label" for="sex">Sex</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="days[]" value="6" id="sab">
+                                <label class="form-check-label" for="sab">Sáb</label>
+                            </div>
+                        </div>
+
+                        <h6 class="text-success border-bottom pb-2">Horários</h6>
+                        <div class="row g-2 mb-3">
+                            <div class="col-6">
+                                <label class="form-label small text-muted">Primeira Aula</label>
+                                <input type="time" class="form-control" name="start_time" value="07:00" required>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label small text-muted">Última Aula (Início)</label>
+                                <input type="time" class="form-control" name="end_time" value="20:00" required>
+                            </div>
+                        </div>
+
+                        <div class="row g-2">
+                            <div class="col-6">
+                                <label class="form-label small text-muted">Duração (min)</label>
+                                <input type="number" class="form-control" name="duration" value="60" step="15" required>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label small text-muted">Vagas</label>
+                                <input type="number" class="form-control" name="capacity" value="3" min="1" required>
+                            </div>
+                        </div>
+
+                        <div class="d-grid mt-4">
+                            <button type="submit" class="btn btn-success">Gerar Grade</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Footer -->
     <?php require __DIR__ . '/partials/footer.php'; ?>
 

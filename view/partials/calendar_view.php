@@ -51,10 +51,25 @@ if (isset($_SESSION['user_id']) && isset($hasAssessment) && !$hasAssessment && (
 <?php endif; ?>
 
 <?php if ($is_admin && isset($_GET['action']) && $_GET['action'] === 'admin'): ?>
-    <div class="d-flex justify-content-end mb-2">
-        <a href="index.php?action=showScheduleForm" class="btn btn-success btn-sm fw-bold shadow-sm">
-            <i class="bi bi-plus-lg me-1"></i> Novo Horário
-        </a>
+    <div class="d-flex justify-content-end align-items-center mb-2 gap-2">
+        
+        <button type="button" 
+                class="btn btn-outline-secondary btn-sm d-flex align-items-center justify-content-center" 
+                style="width: 32px; height: 32px;"
+                data-bs-toggle="tooltip" 
+                data-bs-html="true"
+                data-bs-placement="left"
+                title="• Clique em uma data vazia para criar um horário individual.<br>• Clique em um horário existente para gerenciar.">
+            <i class="bi bi-info-lg"></i>
+        </button>
+
+        <button class="btn btn-success btn-sm fw-bold shadow-sm d-flex align-items-center" 
+                style="height: 32px;"
+                data-bs-toggle="modal" 
+                data-bs-target="#bulkScheduleModal" >
+            <i class="bi bi-calendar-plus me-1"></i> Gerar Grade
+        </button>
+
     </div>
 <?php endif; ?>
 
@@ -80,5 +95,14 @@ if (isset($_SESSION['user_id']) && isset($hasAssessment) && !$hasAssessment && (
         <span class="rounded-circle me-2" style="width: 10px; height: 10px; background-color: #17a2b8;"></span>
         <span>Seus Agendamentos</span>
     </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        })
+    });
+</script>
 
 </div>

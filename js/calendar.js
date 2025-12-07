@@ -534,6 +534,63 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    var bulkForm = document.getElementById('bulkScheduleForm');
+    
+    if (bulkForm) {
+        bulkForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // Validação simples: Pelo menos um dia marcado
+            var checkedDays = bulkForm.querySelectorAll('input[name="days[]"]:checked');
+            if (checkedDays.length === 0) {
+                Swal.fire({ icon: 'warning', title: 'Atenção', text: 'Selecione pelo menos um dia da semana.' });
+                return;
+            }
+
+            var submitBtn = bulkForm.querySelector('button[type="submit"]');
+            var originalText = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Gerando...';
+
+            var formData = new FormData(bulkForm);
+
+            fetch('index.php?action=generateSchedules', {
+                method: 'POST',
+                body: formData
+            })
+            .then(resp => resp.json())
+            .then(data => {
+                if (data.status === 'ok') {
+                    // Fecha Modal
+                    var modalEl = document.getElementById('bulkScheduleModal');
+                    var modal = bootstrap.Modal.getInstance(modalEl);
+                    if (!modal) modal = new bootstrap.Modal(modalEl);
+                    modal.hide();
+
+                    // Sucesso com contagem
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Sucesso!',
+                        text: `${data.count} horários foram criados.`,
+                        confirmButtonColor: '#28a745'
+                    });
+
+                    // Atualiza calendário
+                    calendar.refetchEvents();
+                } else {
+                    Swal.fire({ icon: 'error', title: 'Erro', text: data.msg });
+                }
+            })
+            .catch(error => {
+                Swal.fire({ icon: 'error', title: 'Erro', text: 'Falha na conexão.' });
+            })
+            .finally(() => {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+            });
+        });
+    }
+
     // Lógica para renderizar o calendário
     // Função auxiliar para configurar o botão (só se ele existir)
     function setupCalendarRender(btn) {

@@ -157,6 +157,11 @@ switch ($action) {
         $assessmentController->saveAdminAssessment();
         break;
 
+    // Gerar grade em massa
+    case 'generateSchedules':
+        $scheduleController->generateSchedules();
+        break;
+
     // Default: redireciona para home
     default:
         $userController->home();
